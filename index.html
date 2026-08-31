@@ -6,9 +6,7 @@
 <meta name="theme-color" content="#0b1020">
 <title>Minha IA</title>
 <style>
-*{
-    box-sizing:border-box;
-}
+*{box-sizing:border-box}
 body{
     margin:0;
     font-family:Arial,Helvetica,sans-serif;
@@ -24,7 +22,6 @@ body{
     flex-direction:column;
     background:#0d1320;
 }
-/* HEADER */
 header{
     height:72px;
     padding:12px 16px;
@@ -48,9 +45,7 @@ header{
     background:linear-gradient(135deg,#6366f1,#8b5cf6);
     box-shadow:0 5px 20px rgba(99,102,241,.25);
 }
-.title{
-    flex:1;
-}
+.title{flex:1}
 .title h1{
     margin:0;
     font-size:19px;
@@ -69,7 +64,6 @@ header{
     font-size:20px;
     cursor:pointer;
 }
-/* CHAT */
 #chat{
     flex:1;
     padding:20px 16px 140px;
@@ -93,7 +87,6 @@ header{
     background:#5146e5;
     margin-left:auto;
 }
-/* FERRAMENTAS */
 .tools{
     position:fixed;
     bottom:77px;
@@ -107,6 +100,7 @@ header{
     background:rgba(13,19,32,.94);
     backdrop-filter:blur(10px);
     border-top:1px solid #263247;
+    z-index:5;
 }
 .tool{
     flex:0 0 auto;
@@ -121,7 +115,6 @@ header{
 .tool:hover{
     background:#243149;
 }
-/* INPUT */
 .input-area{
     position:fixed;
     bottom:0;
@@ -131,6 +124,7 @@ header{
     padding:10px 12px 14px;
     background:#101827;
     border-top:1px solid #263247;
+    z-index:6;
 }
 .input-box{
     display:flex;
@@ -157,11 +151,14 @@ header{
     border-radius:14px;
     background:#6366f1;
     color:white;
-    font-size:19px;
+    font-size:25px;
     cursor:pointer;
 }
 .send:hover{
     background:#5146e5;
+}
+.send:disabled{
+    opacity:.5;
 }
 .status{
     text-align:center;
@@ -169,7 +166,6 @@ header{
     font-size:10px;
     margin-top:6px;
 }
-/* PAINEL */
 .panel{
     position:fixed;
     inset:0;
@@ -196,9 +192,7 @@ header{
     justify-content:space-between;
     margin-bottom:15px;
 }
-.panel-header h2{
-    margin:0;
-}
+.panel-header h2{margin:0}
 .close{
     width:36px;
     height:36px;
@@ -222,7 +216,6 @@ header{
 .panel-button:hover{
     background:#273650;
 }
-/* MEMÓRIA */
 .memory-item{
     background:#182235;
     border:1px solid #29374e;
@@ -244,7 +237,6 @@ header{
     border-radius:8px;
     cursor:pointer;
 }
-/* MODAL */
 textarea{
     width:100%;
     min-height:160px;
@@ -271,29 +263,23 @@ textarea{
     color:#7f8ba0;
     padding:20px;
 }
-/* DESKTOP */
+.error{
+    background:#3a2025;
+    border:1px solid #6b3039;
+}
 @media(min-width:700px){
-    body{
-        padding:20px;
-    }
+    body{padding:20px}
     .app{
         min-height:calc(100vh - 40px);
         border:1px solid #263247;
         border-radius:22px;
         overflow:hidden;
     }
-    header{
-        position:relative;
-    }
+    header{position:relative}
 }
-/* MOBILE */
 @media(max-width:420px){
-    .message{
-        max-width:94%;
-    }
-    .title h1{
-        font-size:17px;
-    }
+    .message{max-width:94%}
+    .title h1{font-size:17px}
 }
 </style>
 </head>
@@ -308,134 +294,126 @@ textarea{
     <button class="menu" onclick="abrirPainel()">☰</button>
 </header>
 <main id="chat">
-    <div class="message ai">
+<div class="message ai">
 Olá! 👋
-Eu sou a sua Central IA.
+Eu sou a sua Minha IA.
 🧠 Memória na nuvem
+🤖 Gemini
 💬 Histórico
 📚 Faculdade
 💰 Finanças
 💻 Programação
 📄 PDF
 🎨 Imagens
-📁 Arquivos
-🎙️ Voz
-A conexão com o Firebase está sendo inicializada.
-Você também pode me dizer:
-“Guarde que meu projeto é importante.”
-ou
-“Mostre minhas memórias.”
-    </div>
+Agora estou conectando meu cérebro de IA...
+Pode conversar comigo normalmente.
+</div>
 </main>
 <div class="tools">
-    <button class="tool" onclick="ferramenta('🎨 GERAR IMAGEM')">
-        🎨 Imagem
-    </button>
-    <button class="tool" onclick="ferramenta('📄 CRIAR PDF')">
-        📄 PDF
-    </button>
-    <button class="tool" onclick="ferramenta('💰 FINANÇAS')">
-        💰 Finanças
-    </button>
-    <button class="tool" onclick="ferramenta('📚 FACULDADE')">
-        📚 Faculdade
-    </button>
-    <button class="tool" onclick="ferramenta('💻 PROGRAMAÇÃO')">
-        💻 Código
-    </button>
-    <button class="tool" onclick="mostrarMemorias()">
-        🧠 Memória
-    </button>
+<button class="tool" onclick="ferramenta('🎨 GERAR IMAGEM')">
+🎨 Imagem
+</button>
+<button class="tool" onclick="ferramenta('📄 CRIAR PDF')">
+📄 PDF
+</button>
+<button class="tool" onclick="ferramenta('💰 FINANÇAS')">
+💰 Finanças
+</button>
+<button class="tool" onclick="ferramenta('📚 FACULDADE')">
+📚 Faculdade
+</button>
+<button class="tool" onclick="ferramenta('💻 PROGRAMAÇÃO')">
+💻 Código
+</button>
+<button class="tool" onclick="mostrarMemorias()">
+🧠 Memória
+</button>
 </div>
 <div class="input-area">
-    <div class="input-box">
-        <input
-            id="prompt"
-            type="text"
-            placeholder="Converse com sua IA..."
-            autocomplete="off"
-        >
-        <button class="send" onclick="enviar()">
-            ➤
-        </button>
-    </div>
-    <div class="status" id="status">
-        Conectando à memória na nuvem...
-    </div>
+<div class="input-box">
+<input
+id="prompt"
+type="text"
+placeholder="Converse com sua IA..."
+autocomplete="off"
+>
+<button class="send" id="sendButton" onclick="enviar()">
+↑
+</button>
+</div>
+<div class="status" id="status">
+Conectando ao cérebro da IA...
+</div>
 </div>
 </div>
 <!-- PAINEL -->
 <div class="panel" id="painel">
-    <div class="panel-box">
-        <div class="panel-header">
-            <h2>⚙️ Central</h2>
-            <button class="close" onclick="fecharPainel()">
-                ✕
-            </button>
-        </div>
-        <button class="panel-button" onclick="mostrarMemorias()">
-            🧠 Ver minhas memórias
-        </button>
-        <button class="panel-button" onclick="novaMemoria()">
-            ➕ Adicionar memória
-        </button>
-        <button class="panel-button" onclick="exportarMemoria()">
-            📤 Exportar memória
-        </button>
-        <button class="panel-button" onclick="importarMemoria()">
-            📥 Importar memória
-        </button>
-        <button class="panel-button" onclick="limparConversa()">
-            🗑️ Limpar conversa
-        </button>
-        <button class="panel-button" onclick="apagarTudo()">
-            ⚠️ Apagar todas as memórias
-        </button>
-    </div>
+<div class="panel-box">
+<div class="panel-header">
+<h2>⚙️ Central</h2>
+<button class="close" onclick="fecharPainel()">✕</button>
 </div>
-<!-- MODAL MEMÓRIA -->
+<button class="panel-button" onclick="mostrarMemorias()">
+🧠 Ver minhas memórias
+</button>
+<button class="panel-button" onclick="novaMemoria()">
+➕ Adicionar memória
+</button>
+<button class="panel-button" onclick="exportarMemoria()">
+📤 Exportar memória
+</button>
+<button class="panel-button" onclick="importarMemoria()">
+📥 Importar memória
+</button>
+<button class="panel-button" onclick="limparConversa()">
+🗑️ Limpar conversa
+</button>
+<button class="panel-button" onclick="apagarTudo()">
+⚠️ Apagar todas as memórias
+</button>
+</div>
+</div>
+<!-- MEMÓRIAS -->
 <div class="panel" id="memoriaModal">
-    <div class="panel-box">
-        <div class="panel-header">
-            <h2>🧠 Memória</h2>
-            <button class="close" onclick="fecharMemoria()">
-                ✕
-            </button>
-        </div>
-        <div id="listaMemorias">
-            <div class="loading">
-                Carregando memórias...
-            </div>
-        </div>
-    </div>
+<div class="panel-box">
+<div class="panel-header">
+<h2>🧠 Memória</h2>
+<button class="close" onclick="fecharMemoria()">✕</button>
 </div>
-<!-- MODAL NOVA MEMÓRIA -->
+<div id="listaMemorias">
+<div class="loading">Carregando...</div>
+</div>
+</div>
+</div>
+<!-- NOVA MEMÓRIA -->
 <div class="panel" id="novaMemoriaModal">
-    <div class="panel-box">
-        <div class="panel-header">
-            <h2>➕ Nova memória</h2>
-            <button class="close" onclick="fecharNovaMemoria()">
-                ✕
-            </button>
-        </div>
-        <textarea
-            id="novaMemoriaTexto"
-            placeholder="Exemplo: Meu projeto atual é uma Central IA pessoal."
-        ></textarea>
-        <button class="primary" onclick="salvarNovaMemoria()">
-            🧠 Salvar memória
-        </button>
-    </div>
+<div class="panel-box">
+<div class="panel-header">
+<h2>➕ Nova memória</h2>
+<button class="close" onclick="fecharNovaMemoria()">✕</button>
+</div>
+<textarea
+id="novaMemoriaTexto"
+placeholder="Exemplo: Meu projeto atual é uma Central IA pessoal."
+></textarea>
+<button class="primary" onclick="salvarNovaMemoria()">
+🧠 Salvar memória
+</button>
+</div>
 </div>
 <input
-    type="file"
-    id="arquivoMemoria"
-    accept=".json"
-    style="display:none"
+type="file"
+id="arquivoMemoria"
+accept=".json"
+style="display:none"
 >
-<!-- FIREBASE -->
 <script type="module">
-import { initializeApp }
+/* ==========================================
+   FIREBASE
+========================================== */
+import {
+    initializeApp
+}
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
 import {
     getAuth,
@@ -452,77 +430,124 @@ import {
     doc,
     query,
     orderBy,
-    serverTimestamp,
-    setDoc,
-    getDoc
+    serverTimestamp
 }
 from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 /* ==========================================
-   CONFIGURAÇÃO DO FIREBASE
+   FIREBASE AI LOGIC
+========================================== */
+import {
+    getAI,
+    getGenerativeModel,
+    GoogleAIBackend
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-ai.js";
+/* ==========================================
+   CONFIGURAÇÃO
 ========================================== */
 const firebaseConfig = {
-    apiKey: "AIzaSyB_DdJSOnJbrU-69jxSL36rXmuNCUa9iwA",
-    authDomain: "minha-ia-4756b.firebaseapp.com",
-    projectId: "minha-ia-4756b",
-    storageBucket: "minha-ia-4756b.firebasestorage.app",
-    messagingSenderId: "319954826530",
-    appId: "1:319954826530:web:03f3fb2fe5a855bf73217b"
+    apiKey:
+    "AIzaSyB_DdJSOnJbrU-69jxSL36rXmuNCUa9iwA",
+    authDomain:
+    "minha-ia-4756b.firebaseapp.com",
+    projectId:
+    "minha-ia-4756b",
+    storageBucket:
+    "minha-ia-4756b.firebasestorage.app",
+    messagingSenderId:
+    "319954826530",
+    appId:
+    "1:319954826530:web:03f3fb2fe5a855bf73217b"
 };
 /* ==========================================
    INICIALIZAR FIREBASE
 ========================================== */
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+const app =
+    initializeApp(firebaseConfig);
+const auth =
+    getAuth(app);
+const db =
+    getFirestore(app);
 /* ==========================================
-   USUÁRIO
+   INICIALIZAR GEMINI
+========================================== */
+let modeloIA = null;
+try{
+    const firebaseAI =
+        getAI(
+            app,
+            {
+                backend:
+                new GoogleAIBackend()
+            }
+        );
+    modeloIA =
+        getGenerativeModel(
+            firebaseAI,
+            {
+                model:
+                "gemini-3.7-flash"
+            }
+        );
+}catch(erro){
+    console.error(
+        "Erro ao iniciar Gemini:",
+        erro
+    );
+}
+/* ==========================================
+   VARIÁVEIS
 ========================================== */
 let usuarioAtual = null;
-/* ==========================================
-   ELEMENTOS
-========================================== */
-const promptInput =
-    document.getElementById("prompt");
+let processando = false;
 const chat =
     document.getElementById("chat");
+const promptInput =
+    document.getElementById("prompt");
 const status =
     document.getElementById("status");
+const sendButton =
+    document.getElementById("sendButton");
 /* ==========================================
    LOGIN ANÔNIMO
 ========================================== */
 signInAnonymously(auth)
-.then(() => {
-    status.textContent =
-        "🧠 Memória na nuvem ativada";
-})
-.catch((erro) => {
-    console.error(erro);
-    status.textContent =
-        "⚠️ Erro ao conectar ao Firebase";
-    adicionarMensagem(
-        "⚠️ Não consegui conectar ao Firebase.\n\nVerifique se o login anônimo está ativado no Firebase.",
-        "ai"
-    );
-});
+.catch(
+    function(erro){
+        console.error(
+            erro
+        );
+        status.textContent =
+            "⚠️ Erro no login do Firebase";
+    }
+);
 /* ==========================================
-   IDENTIFICAR USUÁRIO
+   USUÁRIO
 ========================================== */
-onAuthStateChanged(auth, async (user) => {
-    if(!user) return;
-    usuarioAtual = user;
-    status.textContent =
-        "🧠 Memória na nuvem ativada";
-    console.log(
-        "Usuário Firebase:",
-        user.uid
-    );
-    await carregarChatNuvem();
-});
+onAuthStateChanged(
+    auth,
+    async function(user){
+        if(!user){
+            status.textContent =
+                "⚠️ Usuário não autenticado";
+            return;
+        }
+        usuarioAtual =
+            user;
+        if(modeloIA){
+            status.textContent =
+                "🧠 Gemini + memória ativados";
+        }else{
+            status.textContent =
+                "☁️ Firebase conectado";
+        }
+        await carregarChat();
+    }
+);
 /* ==========================================
-   CAMINHOS DO FIRESTORE
+   COLEÇÕES
 ========================================== */
 function memoriaCollection(){
-    if(!usuarioAtual) return null;
     return collection(
         db,
         "memoria",
@@ -531,7 +556,6 @@ function memoriaCollection(){
     );
 }
 function conversaCollection(){
-    if(!usuarioAtual) return null;
     return collection(
         db,
         "conversas",
@@ -540,70 +564,71 @@ function conversaCollection(){
     );
 }
 /* ==========================================
-   MEMÓRIA
+   MEMÓRIAS
 ========================================== */
 async function obterMemorias(){
-    if(!usuarioAtual){
+    if(!usuarioAtual)
         return [];
-    }
     try{
-        const referencia =
-            memoriaCollection();
-        const consulta =
+        const q =
             query(
-                referencia,
-                orderBy("criadoEm","asc")
+                memoriaCollection(),
+                orderBy(
+                    "criadoEm",
+                    "asc"
+                )
             );
         const resultado =
-            await getDocs(consulta);
-        const memorias = [];
-        resultado.forEach((item) => {
-            const dados = item.data();
-            memorias.push({
-                id:item.id,
-                texto:dados.texto || "",
-                data:dados.data || ""
-            });
-        });
-        return memorias;
+            await getDocs(q);
+        const lista = [];
+        resultado.forEach(
+            function(item){
+                const dados =
+                    item.data();
+                lista.push({
+                    id:item.id,
+                    texto:
+                        dados.texto || "",
+                    data:
+                        dados.data || ""
+                });
+            }
+        );
+        return lista;
     }catch(erro){
         console.error(
-            "Erro ao carregar memórias:",
             erro
         );
         return [];
     }
 }
 /* ==========================================
-   ADICIONAR MEMÓRIA
+   SALVAR MEMÓRIA
 ========================================== */
-async function adicionarMemoria(texto){
-    texto = texto.trim();
-    if(!texto) return false;
-    if(!usuarioAtual){
-        alert(
-            "Aguarde a conexão com o Firebase."
-        );
+async function adicionarMemoria(
+    texto
+){
+    if(!usuarioAtual)
         return false;
-    }
     try{
         await addDoc(
             memoriaCollection(),
             {
-                texto:texto,
-                data:new Date()
-                    .toLocaleString("pt-BR"),
-                criadoEm:serverTimestamp()
+                texto:
+                    texto.trim(),
+                data:
+                    new Date()
+                    .toLocaleString(
+                        "pt-BR"
+                    ),
+                criadoEm:
+                    serverTimestamp()
             }
         );
         return true;
     }catch(erro){
         console.error(
-            "Erro ao salvar memória:",
             erro
-        );
-        alert(
-            "Não foi possível salvar a memória."
         );
         return false;
     }
@@ -611,8 +636,8 @@ async function adicionarMemoria(texto){
 /* ==========================================
    REMOVER MEMÓRIA
 ========================================== */
-async function removerMemoria(id){
-    if(!usuarioAtual) return;
+window.removerMemoria =
+async function(id){
     try{
         await deleteDoc(
             doc(
@@ -626,128 +651,210 @@ async function removerMemoria(id){
         await mostrarMemorias();
     }catch(erro){
         console.error(
-            "Erro ao apagar memória:",
             erro
         );
         alert(
-            "Não foi possível apagar a memória."
+            "Erro ao apagar memória."
         );
     }
-}
+};
 /* ==========================================
-   CHAT
+   SALVAR CONVERSA
 ========================================== */
-function adicionarMensagem(
-    texto,
-    tipo,
-    salvar = true
-){
-    const div =
-        document.createElement("div");
-    div.className =
-        "message " + tipo;
-    div.textContent =
-        texto;
-    chat.appendChild(div);
-    chat.scrollTop =
-        chat.scrollHeight;
-    if(
-        salvar &&
-        usuarioAtual
-    ){
-        salvarMensagemNuvem(
-            texto,
-            tipo
-        );
-    }
-}
-/* ==========================================
-   SALVAR MENSAGEM NO FIRESTORE
-========================================== */
-async function salvarMensagemNuvem(
+async function salvarMensagem(
     texto,
     tipo
 ){
-    if(!usuarioAtual) return;
+    if(!usuarioAtual)
+        return;
     try{
         await addDoc(
             conversaCollection(),
             {
                 texto:texto,
                 tipo:tipo,
-                criadoEm:serverTimestamp()
+                criadoEm:
+                    serverTimestamp()
             }
         );
     }catch(erro){
         console.error(
-            "Erro ao salvar conversa:",
             erro
         );
     }
 }
 /* ==========================================
-   CARREGAR CHAT DA NUVEM
+   MOSTRAR MENSAGEM
 ========================================== */
-async function carregarChatNuvem(){
-    if(!usuarioAtual) return;
+function adicionarMensagem(
+    texto,
+    tipo,
+    salvar=true
+){
+    const div =
+        document.createElement(
+            "div"
+        );
+    div.className =
+        "message " + tipo;
+    div.textContent =
+        texto;
+    chat.appendChild(
+        div
+    );
+    chat.scrollTop =
+        chat.scrollHeight;
+    if(
+        salvar &&
+        usuarioAtual
+    ){
+        salvarMensagem(
+            texto,
+            tipo
+        );
+    }
+}
+/* ==========================================
+   CARREGAR HISTÓRICO
+========================================== */
+async function carregarChat(){
+    if(!usuarioAtual)
+        return;
     try{
-        const referencia =
-            conversaCollection();
-        const consulta =
+        const q =
             query(
-                referencia,
-                orderBy("criadoEm","asc")
+                conversaCollection(),
+                orderBy(
+                    "criadoEm",
+                    "asc"
+                )
             );
         const resultado =
-            await getDocs(consulta);
+            await getDocs(q);
         if(
             resultado.empty
         ){
             return;
         }
         chat.innerHTML = "";
-        resultado.forEach((item) => {
-            const dados =
-                item.data();
-            if(
-                dados.texto &&
-                dados.tipo
-            ){
-                adicionarMensagem(
-                    dados.texto,
-                    dados.tipo,
-                    false
-                );
+        resultado.forEach(
+            function(item){
+                const dados =
+                    item.data();
+                if(
+                    dados.texto &&
+                    dados.tipo
+                ){
+                    adicionarMensagem(
+                        dados.texto,
+                        dados.tipo,
+                        false
+                    );
+                }
             }
-        });
+        );
     }catch(erro){
         console.error(
-            "Erro ao carregar histórico:",
             erro
         );
     }
 }
 /* ==========================================
-   ENVIAR
+   CRIAR CONTEXTO DE MEMÓRIA
 ========================================== */
-window.enviar = async function(){
+async function criarContexto(){
+    const memorias =
+        await obterMemorias();
+    if(
+        memorias.length === 0
+    ){
+        return "Nenhuma memória salva ainda.";
+    }
+    let contexto =
+        "MEMÓRIAS IMPORTANTES DO USUÁRIO:\n\n";
+    memorias.forEach(
+        function(memoria, index){
+            contexto +=
+                `${index + 1}. ${memoria.texto}\n`;
+        }
+    );
+    return contexto;
+}
+/* ==========================================
+   CÉREBRO GEMINI
+========================================== */
+async function perguntarGemini(
+    pergunta
+){
+    if(!modeloIA){
+        throw new Error(
+            "Gemini não foi inicializado."
+        );
+    }
+    const memoria =
+        await criarContexto();
+    const sistema =
+`
+Você é a Minha IA, um assistente pessoal inteligente.
+Seu objetivo é ajudar o usuário de forma natural, útil, inteligente e objetiva.
+Você possui memória pessoal armazenada no Firebase.
+Use as memórias abaixo quando forem relevantes para responder.
+${memoria}
+REGRAS:
+- Não invente memórias.
+- Não diga que sabe algo se não estiver nas informações disponíveis.
+- Use o contexto da conversa para manter continuidade.
+- Responda em português do Brasil.
+- Seja natural.
+- Se o usuário perguntar o que você lembra, explique usando as memórias fornecidas.
+- Se uma informação estiver nas memórias, você pode utilizá-la naturalmente.
+- Você é o cérebro da Minha IA.
+`;
+    const prompt =
+        sistema +
+        "\n\nMENSAGEM DO USUÁRIO:\n" +
+        pergunta;
+    const resultado =
+        await modeloIA.generateContent(
+            prompt
+        );
+    const resposta =
+        resultado.response.text();
+    return resposta;
+}
+/* ==========================================
+   ENVIAR MENSAGEM
+========================================== */
+window.enviar =
+async function(){
     const texto =
         promptInput.value.trim();
-    if(!texto) return;
+    if(
+        !texto ||
+        processando
+    ){
+        return;
+    }
     adicionarMensagem(
         texto,
         "user"
     );
     promptInput.value = "";
+    /* MEMÓRIA MANUAL */
     const lower =
         texto.toLowerCase();
-    /* MEMÓRIA */
     if(
-        lower.startsWith("guarde ") ||
-        lower.startsWith("lembre ") ||
-        lower.startsWith("memorize ")
+        lower.startsWith(
+            "guarde "
+        ) ||
+        lower.startsWith(
+            "lembre "
+        ) ||
+        lower.startsWith(
+            "memorize "
+        )
     ){
-        let memoria =
+        const memoria =
             texto
             .replace(
                 /^guarde\s*/i,
@@ -762,59 +869,74 @@ window.enviar = async function(){
                 ""
             )
             .trim();
-        const sucesso =
-            await adicionarMemoria(
-                memoria
-            );
-        if(sucesso){
-            adicionarMensagem(
-                "🧠 Salvei essa informação na sua memória.\n\n" +
-                memoria,
-                "ai"
-            );
+        if(
+            memoria
+        ){
+            const sucesso =
+                await adicionarMemoria(
+                    memoria
+                );
+            if(sucesso){
+                adicionarMensagem(
+                    "🧠 Salvei essa informação na sua memória.\n\n" +
+                    memoria,
+                    "ai"
+                );
+            }else{
+                adicionarMensagem(
+                    "⚠️ Não consegui salvar essa memória no Firebase.",
+                    "ai"
+                );
+            }
         }
         return;
     }
-    /* MOSTRAR MEMÓRIAS */
-    if(
-        lower.includes("minhas memórias") ||
-        lower.includes("minhas memorias") ||
-        lower.includes("o que você lembra") ||
-        lower.includes("o que voce lembra")
-    ){
-        await mostrarMemorias();
-        return;
-    }
-    /* RESPOSTA TEMPORÁRIA */
-    setTimeout(
-        async function(){
-            const memorias =
-                await obterMemorias();
-            let resposta =
-`Entendi. 🤖
-Você disse:
-"${texto}"
-Minha memória na nuvem está funcionando.
-`;
-            if(
-                memorias.length > 0
-            ){
-                resposta +=
-`\n🧠 Tenho ${memorias.length} memória(s) salva(s).
-Quando conectarmos o cérebro de IA, vou poder utilizar essas informações para responder de maneira personalizada.`;
-            }else{
-                resposta +=
-`\nAinda não tenho memórias salvas.
-Você pode dizer:
-“Guarde que ...”`;
-            }
-            adicionarMensagem(
-                resposta,
-                "ai"
-            );
-        },
-        500
+    /* PROCESSANDO */
+    processando = true;
+    sendButton.disabled = true;
+    status.textContent =
+        "🤖 Pensando...";
+    const indicador =
+        document.createElement(
+            "div"
+        );
+    indicador.className =
+        "message ai";
+    indicador.textContent =
+        "🤖 Pensando...";
+    chat.appendChild(
+        indicador
     );
+    chat.scrollTop =
+        chat.scrollHeight;
+    try{
+        const resposta =
+            await perguntarGemini(
+                texto
+            );
+        indicador.remove();
+        adicionarMensagem(
+            resposta,
+            "ai"
+        );
+        status.textContent =
+            "🧠 Gemini + memória ativados";
+    }catch(erro){
+        console.error(
+            "Erro Gemini:",
+            erro
+        );
+        indicador.remove();
+        adicionarMensagem(
+            "⚠️ Não consegui falar com o cérebro da IA.\n\n" +
+            "Verifique se o Gemini Developer API está ativado no Firebase AI Logic.",
+            "ai error"
+        );
+        status.textContent =
+            "⚠️ Erro na IA";
+    }
+    processando = false;
+    sendButton.disabled = false;
 };
 /* ==========================================
    ENTER
@@ -832,92 +954,100 @@ promptInput.addEventListener(
 /* ==========================================
    FERRAMENTAS
 ========================================== */
-window.ferramenta = function(nome){
+window.ferramenta =
+async function(nome){
     adicionarMensagem(
         nome,
         "user"
     );
-    let resposta = "";
+    let comando = "";
     if(
-        nome.includes("IMAGEM")
+        nome.includes(
+            "IMAGEM"
+        )
     ){
-        resposta =
-`🎨 GERADOR DE IMAGENS
-A ferramenta está preparada.
-Na próxima etapa vamos conectar um gerador de imagens de verdade.
-Você poderá pedir algo como:
-“Crie uma capa para meu livro infantil.”`;
+        comando =
+        "Explique ao usuário que o módulo de geração de imagens da Minha IA está sendo preparado. Dê sugestões de como ele pode usar geração de imagens.";
     }
     else if(
-        nome.includes("PDF")
+        nome.includes(
+            "PDF"
+        )
     ){
-        resposta =
-`📄 GERADOR DE PDF
-Podemos transformar textos, trabalhos, relatórios e conteúdos da IA em PDF.
-Na próxima etapa vamos deixar o gerador mais completo.`;
+        comando =
+        "Explique como a Minha IA poderá ajudar a criar PDFs, trabalhos, relatórios e documentos.";
     }
     else if(
-        nome.includes("FINANÇAS")
+        nome.includes(
+            "FINANÇAS"
+        )
     ){
-        resposta =
-`💰 MODO FINANÇAS
-Aqui vamos colocar:
-• Juros compostos
-• Aportes mensais
-• Patrimônio
-• Projeções
-• Gráficos
-• Comparação de cenários`;
+        comando =
+        "Ative o modo FINANÇAS. Ajude o usuário com juros compostos, investimentos, patrimônio, aportes e projeções. Explique claramente que projeções financeiras são estimativas.";
     }
     else if(
-        nome.includes("FACULDADE")
+        nome.includes(
+            "FACULDADE"
+        )
     ){
-        resposta =
-`📚 MODO FACULDADE
-A IA poderá ajudar com:
-• Explicações
-• UML
-• BPMN
-• Processos de software
-• Trabalhos
-• Resumos
-• Exercícios`;
+        comando =
+        "Ative o modo FACULDADE. Ajude o usuário com estudos, UML, BPMN, processos de software, trabalhos, exercícios e explicações.";
     }
     else if(
-        nome.includes("PROGRAMAÇÃO")
+        nome.includes(
+            "PROGRAMAÇÃO"
+        )
     ){
-        resposta =
-`💻 MODO PROGRAMAÇÃO
-A IA poderá:
-• Criar código
-• Corrigir erros
-• Explicar código
-• Criar sites
-• Criar aplicativos
-• Ajudar nos seus projetos`;
+        comando =
+        "Ative o modo PROGRAMAÇÃO. Ajude o usuário a criar, corrigir e entender códigos, sites e aplicativos.";
     }
-    adicionarMensagem(
-        resposta,
-        "ai"
-    );
+    if(!comando)
+        return;
+    status.textContent =
+        "🤖 Pensando...";
+    try{
+        const resposta =
+            await perguntarGemini(
+                comando
+            );
+        adicionarMensagem(
+            resposta,
+            "ai"
+        );
+    }catch(erro){
+        console.error(
+            erro
+        );
+        adicionarMensagem(
+            "⚠️ Não consegui executar essa ferramenta.",
+            "ai"
+        );
+    }
+    status.textContent =
+        "🧠 Gemini + memória ativados";
 };
 /* ==========================================
    PAINEL
 ========================================== */
-window.abrirPainel = function(){
+window.abrirPainel =
+function(){
     document.getElementById(
         "painel"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
 };
-window.fecharPainel = function(){
+window.fecharPainel =
+function(){
     document.getElementById(
         "painel"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 };
 /* ==========================================
-   MOSTRAR MEMÓRIAS
+   MEMÓRIAS
 ========================================== */
-window.mostrarMemorias = async function(){
+window.mostrarMemorias =
+async function(){
     fecharPainel();
     const modal =
         document.getElementById(
@@ -927,12 +1057,12 @@ window.mostrarMemorias = async function(){
         document.getElementById(
             "listaMemorias"
         );
+    modal.style.display =
+        "flex";
     lista.innerHTML =
         `<div class="loading">
             🧠 Carregando memória...
         </div>`;
-    modal.style.display =
-        "flex";
     const memorias =
         await obterMemorias();
     if(
@@ -956,49 +1086,74 @@ window.mostrarMemorias = async function(){
                 );
             div.className =
                 "memory-item";
-            div.innerHTML = `
-                <small>
-                    ${escaparHTML(
-                        memoria.data
-                    )}
-                </small>
-                <div>
-                    ${escaparHTML(
-                        memoria.texto
-                    )}
-                </div>
-                <button
-                    class="delete-memory"
-                    onclick="removerMemoria('${memoria.id}')">
-                    🗑️ Esquecer
-                </button>
-            `;
+            const data =
+                document.createElement(
+                    "small"
+                );
+            data.textContent =
+                memoria.data;
+            const texto =
+                document.createElement(
+                    "div"
+                );
+            texto.textContent =
+                memoria.texto;
+            const botao =
+                document.createElement(
+                    "button"
+                );
+            botao.className =
+                "delete-memory";
+            botao.textContent =
+                "🗑️ Esquecer";
+            botao.onclick =
+                function(){
+                    removerMemoria(
+                        memoria.id
+                    );
+                };
+            div.appendChild(
+                data
+            );
+            div.appendChild(
+                texto
+            );
+            div.appendChild(
+                botao
+            );
             lista.appendChild(
                 div
             );
         }
     );
 };
-window.fecharMemoria = function(){
+window.fecharMemoria =
+function(){
     document.getElementById(
         "memoriaModal"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 };
 /* ==========================================
    NOVA MEMÓRIA
 ========================================== */
-window.novaMemoria = function(){
+window.novaMemoria =
+function(){
     fecharPainel();
     document.getElementById(
         "novaMemoriaModal"
-    ).style.display = "flex";
+    ).style.display =
+        "flex";
 };
-window.fecharNovaMemoria = function(){
+window.fecharNovaMemoria =
+function(){
     document.getElementById(
         "novaMemoriaModal"
-    ).style.display = "none";
+    ).style.display =
+        "none";
 };
-window.salvarNovaMemoria = async function(){
+window.salvarNovaMemoria =
+async function(){
     const campo =
         document.getElementById(
             "novaMemoriaTexto"
@@ -1019,12 +1174,17 @@ window.salvarNovaMemoria = async function(){
         campo.value = "";
         fecharNovaMemoria();
         await mostrarMemorias();
+    }else{
+        alert(
+            "Não foi possível salvar a memória."
+        );
     }
 };
 /* ==========================================
-   EXPORTAR MEMÓRIA
+   EXPORTAR
 ========================================== */
-window.exportarMemoria = async function(){
+window.exportarMemoria =
+async function(){
     const memorias =
         await obterMemorias();
     const dados = {
@@ -1055,7 +1215,8 @@ window.exportarMemoria = async function(){
         document.createElement(
             "a"
         );
-    a.href = url;
+    a.href =
+        url;
     a.download =
         "minha-ia-memoria.json";
     a.click();
@@ -1064,9 +1225,10 @@ window.exportarMemoria = async function(){
     );
 };
 /* ==========================================
-   IMPORTAR MEMÓRIA
+   IMPORTAR
 ========================================== */
-window.importarMemoria = function(){
+window.importarMemoria =
+function(){
     document.getElementById(
         "arquivoMemoria"
     ).click();
@@ -1078,46 +1240,46 @@ document.getElementById(
     async function(event){
         const arquivo =
             event.target.files[0];
-        if(!arquivo) return;
+        if(!arquivo)
+            return;
         const reader =
             new FileReader();
         reader.onload =
-            async function(){
-                try{
-                    const dados =
-                        JSON.parse(
-                            reader.result
-                        );
-                    if(
-                        !dados.memorias ||
-                        !Array.isArray(
-                            dados.memorias
-                        )
-                    ){
-                        throw new Error();
-                    }
-                    for(
-                        const memoria
-                        of dados.memorias
-                    ){
-                        if(
-                            memoria.texto
-                        ){
-                            await adicionarMemoria(
-                                memoria.texto
-                            );
-                        }
-                    }
-                    alert(
-                        "Memórias importadas com sucesso!"
+        async function(){
+            try{
+                const dados =
+                    JSON.parse(
+                        reader.result
                     );
-                }catch(e){
-                    console.error(e);
-                    alert(
-                        "Arquivo de memória inválido."
-                    );
+                if(
+                    !dados.memorias ||
+                    !Array.isArray(
+                        dados.memorias
+                    )
+                ){
+                    throw new Error();
                 }
-            };
+                for(
+                    const memoria
+                    of dados.memorias
+                ){
+                    if(
+                        memoria.texto
+                    ){
+                        await adicionarMemoria(
+                            memoria.texto
+                        );
+                    }
+                }
+                alert(
+                    "Memórias importadas com sucesso!"
+                );
+            }catch(erro){
+                alert(
+                    "Arquivo de memória inválido."
+                );
+            }
+        };
         reader.readAsText(
             arquivo
         );
@@ -1126,28 +1288,22 @@ document.getElementById(
 /* ==========================================
    LIMPAR CONVERSA
 ========================================== */
-window.limparConversa = async function(){
+window.limparConversa =
+async function(){
     if(
         !usuarioAtual
-    ){
-        alert(
-            "Aguarde a conexão com o Firebase."
-        );
+    )
         return;
-    }
     if(
         !confirm(
-            "Deseja apagar toda a conversa deste usuário?"
+            "Deseja apagar toda a conversa?"
         )
-    ){
+    )
         return;
-    }
     try{
-        const referencia =
-            conversaCollection();
         const resultado =
             await getDocs(
-                referencia
+                conversaCollection()
             );
         for(
             const item
@@ -1158,10 +1314,10 @@ window.limparConversa = async function(){
             );
         }
         chat.innerHTML = `
-            <div class="message ai">
-                Conversa limpa. 🗑️
-                Sua memória continua salva.
-            </div>
+        <div class="message ai">
+        Conversa limpa. 🗑️
+        Suas memórias continuam salvas.
+        </div>
         `;
         fecharPainel();
     }catch(erro){
@@ -1169,35 +1325,29 @@ window.limparConversa = async function(){
             erro
         );
         alert(
-            "Não foi possível limpar a conversa."
+            "Erro ao limpar conversa."
         );
     }
 };
 /* ==========================================
-   APAGAR TODAS AS MEMÓRIAS
+   APAGAR MEMÓRIAS
 ========================================== */
-window.apagarTudo = async function(){
+window.apagarTudo =
+async function(){
     if(
         !usuarioAtual
-    ){
-        alert(
-            "Aguarde a conexão com o Firebase."
-        );
+    )
         return;
-    }
     if(
         !confirm(
             "ATENÇÃO: apagar TODAS as memórias?"
         )
-    ){
+    )
         return;
-    }
     try{
-        const referencia =
-            memoriaCollection();
         const resultado =
             await getDocs(
-                referencia
+                memoriaCollection()
             );
         for(
             const item
@@ -1211,42 +1361,15 @@ window.apagarTudo = async function(){
             "Todas as memórias foram apagadas."
         );
         fecharPainel();
-        await mostrarMemorias();
     }catch(erro){
         console.error(
             erro
         );
         alert(
-            "Não foi possível apagar as memórias."
+            "Erro ao apagar memórias."
         );
     }
 };
-/* ==========================================
-   ESCAPAR HTML
-========================================== */
-function escaparHTML(texto){
-    return String(texto)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-}
 </script>
 </body>
 </html>
