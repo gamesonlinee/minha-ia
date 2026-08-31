@@ -1,2 +1,0 @@
-# minha-ia
-inteligencia artificial

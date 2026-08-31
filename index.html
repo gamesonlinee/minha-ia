@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b1020">
+<title>Minha IA</title>
+<style>
+*{
+    box-sizing:border-box;
+}
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:#080c16;
+    color:#fff;
+}
+.app{
+    width:100%;
+    max-width:850px;
+    min-height:100vh;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+    background:#0d1320;
+}
+/* HEADER */
+header{
+    height:72px;
+    padding:12px 16px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    background:#101827;
+    border-bottom:1px solid #263247;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+.logo{
+    width:46px;
+    height:46px;
+    border-radius:15px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:24px;
+    background:linear-gradient(135deg,#6366f1,#8b5cf6);
+    box-shadow:0 5px 20px rgba(99,102,241,.25);
+}
+.title{
+    flex:1;
+}
+.title h1{
+    margin:0;
+    font-size:19px;
+}
+.title span{
+    color:#8d98aa;
+    font-size:12px;
+}
+.menu{
+    background:#202b40;
+    color:white;
+    border:0;
+    width:42px;
+    height:42px;
+    border-radius:12px;
+    font-size:20px;
+    cursor:pointer;
+}
+/* CHAT */
+#chat{
+    flex:1;
+    padding:20px 16px 140px;
+    overflow-y:auto;
+}
+.message{
+    max-width:88%;
+    padding:14px 16px;
+    border-radius:18px;
+    margin-bottom:14px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    word-wrap:break-word;
+}
+.ai{
+    background:#172033;
+    border:1px solid #27344a;
+    margin-right:auto;
+}
+.user{
+    background:#5146e5;
+    margin-left:auto;
+}
+/* FERRAMENTAS */
+.tools{
+    position:fixed;
+    bottom:77px;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(820px,100%);
+    padding:8px 12px;
+    display:flex;
+    gap:7px;
+    overflow-x:auto;
+    background:rgba(13,19,32,.94);
+    backdrop-filter:blur(10px);
+    border-top:1px solid #263247;
+}
+.tool{
+    flex:0 0 auto;
+    background:#172033;
+    border:1px solid #2a3850;
+    color:#fff;
+    padding:9px 12px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:12px;
+}
+.tool:hover{
+    background:#243149;
+}
+/* INPUT */
+.input-area{
+    position:fixed;
+    bottom:0;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(820px,100%);
+    padding:10px 12px 14px;
+    background:#101827;
+    border-top:1px solid #263247;
+}
+.input-box{
+    display:flex;
+    gap:8px;
+}
+#prompt{
+    flex:1;
+    min-width:0;
+    border:1px solid #303e55;
+    outline:none;
+    background:#182235;
+    color:white;
+    border-radius:15px;
+    padding:14px;
+    font-size:15px;
+}
+#prompt:focus{
+    border-color:#6366f1;
+}
+.send{
+    width:48px;
+    height:48px;
+    border-radius:14px;
+    background:#6366f1;
+    color:white;
+    font-size:19px;
+    cursor:pointer;
+}
+.send:hover{
+    background:#5146e5;
+}
+.status{
+    text-align:center;
+    color:#68758a;
+    font-size:10px;
+    margin-top:6px;
+}
+/* PAINEL */
+.panel{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:20px;
+    z-index:30;
+}
+.panel-box{
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    overflow-y:auto;
+    background:#111a2a;
+    border:1px solid #30405a;
+    border-radius:20px;
+    padding:20px;
+}
+.panel-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:15px;
+}
+.panel-header h2{
+    margin:0;
+}
+.close{
+    width:36px;
+    height:36px;
+    border:0;
+    border-radius:10px;
+    background:#263247;
+    color:white;
+    cursor:pointer;
+}
+.panel-button{
+    width:100%;
+    padding:13px;
+    margin:6px 0;
+    border:0;
+    border-radius:12px;
+    background:#1b2639;
+    color:#fff;
+    text-align:left;
+    cursor:pointer;
+}
+.panel-button:hover{
+    background:#273650;
+}
+/* MEMÓRIA */
+.memory-item{
+    background:#182235;
+    border:1px solid #29374e;
+    border-radius:12px;
+    padding:12px;
+    margin:8px 0;
+}
+.memory-item small{
+    display:block;
+    color:#7f8ba0;
+    margin-bottom:5px;
+}
+.delete-memory{
+    margin-top:8px;
+    border:0;
+    background:#54252c;
+    color:#fff;
+    padding:7px 10px;
+    border-radius:8px;
+    cursor:pointer;
+}
+/* MODAL */
+textarea{
+    width:100%;
+    min-height:160px;
+    resize:vertical;
+    border:1px solid #303e55;
+    outline:none;
+    background:#182235;
+    color:white;
+    border-radius:12px;
+    padding:12px;
+    margin:8px 0;
+}
+.primary{
+    width:100%;
+    border:0;
+    padding:13px;
+    border-radius:12px;
+    background:#6366f1;
+    color:white;
+    cursor:pointer;
+}
+/* DESKTOP */
+@media(min-width:700px){
+    body{
+        padding:20px;
+    }
+    .app{
+        min-height:calc(100vh - 40px);
+        border:1px solid #263247;
+        border-radius:22px;
+        overflow:hidden;
+    }
+    header{
+        position:relative;
+    }
+}
+/* MOBILE */
+@media(max-width:420px){
+    .message{
+        max-width:94%;
+    }
+    .title h1{
+        font-size:17px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+    <div class="logo">🤖</div>
+    <div class="title">
+        <h1>Minha IA</h1>
+        <span>Assistente pessoal inteligente</span>
+    </div>
+    <button class="menu" onclick="abrirPainel()">☰</button>
+</header>
+<main id="chat">
+    <div class="message ai">
+Olá! 👋
+Eu sou a sua Central IA.
+Nesta primeira versão já tenho:
+🧠 Memória
+💬 Histórico
+📚 Faculdade
+💰 Finanças
+💻 Programação
+📄 PDF
+🎨 Imagens
+📁 Arquivos
+🎙️ Voz
+O cérebro de IA será conectado na próxima etapa.
+Você também pode me dizer:
+“Guarde que meu projeto é importante.”
+ou
+“Mostre minhas memórias.”
+    </div>
+</main>
+<div class="tools">
+    <button class="tool" onclick="ferramenta('🎨 GERAR IMAGEM')">
+        🎨 Imagem
+    </button>
+    <button class="tool" onclick="ferramenta('📄 CRIAR PDF')">
+        📄 PDF
+    </button>
+    <button class="tool" onclick="ferramenta('💰 FINANÇAS')">
+        💰 Finanças
+    </button>
+    <button class="tool" onclick="ferramenta('📚 FACULDADE')">
+        📚 Faculdade
+    </button>
+    <button class="tool" onclick="ferramenta('💻 PROGRAMAÇÃO')">
+        💻 Código
+    </button>
+    <button class="tool" onclick="mostrarMemorias()">
+        🧠 Memória
+    </button>
+</div>
+<div class="input-area">
+    <div class="input-box">
+        <input
+            id="prompt"
+            type="text"
+            placeholder="Converse com sua IA..."
+            autocomplete="off"
+        >
+        <button class="send" onclick="enviar()">
+            ➤
+        </button>
+    </div>
+    <div class="status">
+        Central IA • Memória local ativada
+    </div>
+</div>
+</div>
+<!-- PAINEL -->
+<div class="panel" id="painel">
+    <div class="panel-box">
+        <div class="panel-header">
+            <h2>⚙️ Central</h2>
+            <button class="close" onclick="fecharPainel()">
+                ✕
+            </button>
+        </div>
+        <button class="panel-button" onclick="mostrarMemorias()">
+            🧠 Ver minhas memórias
+        </button>
+        <button class="panel-button" onclick="novaMemoria()">
+            ➕ Adicionar memória
+        </button>
+        <button class="panel-button" onclick="exportarMemoria()">
+            📤 Exportar memória
+        </button>
+        <button class="panel-button" onclick="importarMemoria()">
+            📥 Importar memória
+        </button>
+        <button class="panel-button" onclick="limparConversa()">
+            🗑️ Limpar conversa
+        </button>
+        <button class="panel-button" onclick="apagarTudo()">
+            ⚠️ Apagar todas as memórias
+        </button>
+    </div>
+</div>
+<!-- MODAL MEMÓRIA -->
+<div class="panel" id="memoriaModal">
+    <div class="panel-box">
+        <div class="panel-header">
+            <h2>🧠 Memória</h2>
+            <button class="close" onclick="fecharMemoria()">
+                ✕
+            </button>
+        </div>
+        <div id="listaMemorias"></div>
+    </div>
+</div>
+<!-- MODAL NOVA MEMÓRIA -->
+<div class="panel" id="novaMemoriaModal">
+    <div class="panel-box">
+        <div class="panel-header">
+            <h2>➕ Nova memória</h2>
+            <button class="close" onclick="fecharNovaMemoria()">
+                ✕
+            </button>
+        </div>
+        <textarea
+            id="novaMemoriaTexto"
+            placeholder="Exemplo: Meu projeto atual é uma Central IA pessoal."
+        ></textarea>
+        <button class="primary" onclick="salvarNovaMemoria()">
+            🧠 Salvar memória
+        </button>
+    </div>
+</div>
+<input
+    type="file"
+    id="arquivoMemoria"
+    accept=".json"
+    style="display:none"
+>
+<script>
+/* ==========================================
+   BANCO DE MEMÓRIA LOCAL
+========================================== */
+const MEMORY_KEY = "minha_ia_memorias_v1";
+const CHAT_KEY = "minha_ia_chat_v1";
+function obterMemorias(){
+    try{
+        return JSON.parse(
+            localStorage.getItem(MEMORY_KEY)
+        ) || [];
+    }catch(e){
+        return [];
+    }
+}
+function salvarMemorias(memorias){
+    localStorage.setItem(
+        MEMORY_KEY,
+        JSON.stringify(memorias)
+    );
+}
+function adicionarMemoria(texto){
+    texto = texto.trim();
+    if(!texto) return false;
+    const memorias = obterMemorias();
+    const memoria = {
+        id:Date.now(),
+        texto:texto,
+        data:new Date().toLocaleString("pt-BR")
+    };
+    memorias.push(memoria);
+    salvarMemorias(memorias);
+    return true;
+}
+function removerMemoria(id){
+    const memorias = obterMemorias()
+        .filter(m => m.id !== id);
+    salvarMemorias(memorias);
+    mostrarMemorias();
+}
+/* ==========================================
+   CHAT
+========================================== */
+const promptInput =
+    document.getElementById("prompt");
+const chat =
+    document.getElementById("chat");
+function adicionarMensagem(texto,tipo){
+    const div =
+        document.createElement("div");
+    div.className =
+        "message " + tipo;
+    div.textContent = texto;
+    chat.appendChild(div);
+    chat.scrollTop =
+        chat.scrollHeight;
+    salvarChat();
+}
+function enviar(){
+    const texto =
+        promptInput.value.trim();
+    if(!texto) return;
+    adicionarMensagem(
+        texto,
+        "user"
+    );
+    promptInput.value = "";
+    /* MEMÓRIA */
+    const lower =
+        texto.toLowerCase();
+    if(
+        lower.startsWith("guarde ") ||
+        lower.startsWith("lembre ") ||
+        lower.startsWith("memorize ")
+    ){
+        let memoria = texto
+            .replace(/^guarde\s*/i,"")
+            .replace(/^lembre\s*/i,"")
+            .replace(/^memorize\s*/i,"")
+            .trim();
+        if(adicionarMemoria(memoria)){
+            adicionarMensagem(
+                "🧠 Salvei essa informação na sua memória.\n\n" +
+                memoria,
+                "ai"
+            );
+        }
+        return;
+    }
+    if(
+        lower.includes("minhas memórias") ||
+        lower.includes("minhas memorias") ||
+        lower.includes("o que você lembra") ||
+        lower.includes("o que voce lembra")
+    ){
+        mostrarMemorias();
+        return;
+    }
+    /* RESPOSTA TEMPORÁRIA */
+    setTimeout(function(){
+        const memorias =
+            obterMemorias();
+        let resposta =
+`Entendi. 🤖
+Você disse:
+"${texto}"
+Minha estrutura de memória está funcionando.
+`;
+        if(memorias.length > 0){
+            resposta +=
+`🧠 Tenho ${memorias.length} memória(s) salva(s).
+Quando conectarmos o cérebro de IA, vou poder utilizar essas informações para responder de maneira personalizada.`;
+        }else{
+            resposta +=
+`Ainda não tenho memórias salvas.
+Você pode dizer:
+“Guarde que ...”`;
+        }
+        adicionarMensagem(
+            resposta,
+            "ai"
+        );
+    },500);
+}
+promptInput.addEventListener(
+    "keydown",
+    function(event){
+        if(event.key === "Enter"){
+            enviar();
+        }
+    }
+);
+/* ==========================================
+   FERRAMENTAS
+========================================== */
+function ferramenta(nome){
+    adicionarMensagem(
+        nome,
+        "user"
+    );
+    let resposta = "";
+    if(nome.includes("IMAGEM")){
+        resposta =
+`🎨 GERADOR DE IMAGENS
+A ferramenta está preparada.
+Na próxima etapa vamos conectar um gerador de imagens de verdade.
+Você poderá pedir algo como:
+“Crie uma capa para meu livro infantil.”`;
+    }
+    else if(nome.includes("PDF")){
+        resposta =
+`📄 GERADOR DE PDF
+Podemos transformar textos, trabalhos, relatórios e conteúdos da IA em PDF.
+Na próxima etapa vamos deixar o gerador mais completo.`;
+    }
+    else if(nome.includes("FINANÇAS")){
+        resposta =
+`💰 MODO FINANÇAS
+Aqui vamos colocar:
+• Juros compostos
+• Aportes mensais
+• Patrimônio
+• Projeções
+• Gráficos
+• Comparação de cenários`;
+    }
+    else if(nome.includes("FACULDADE")){
+        resposta =
+`📚 MODO FACULDADE
+A IA poderá ajudar com:
+• Explicações
+• UML
+• BPMN
+• Processos de software
+• Trabalhos
+• Resumos
+• Exercícios`;
+    }
+    else if(nome.includes("PROGRAMAÇÃO")){
+        resposta =
+`💻 MODO PROGRAMAÇÃO
+A IA poderá:
+• Criar código
+• Corrigir erros
+• Explicar código
+• Criar sites
+• Criar aplicativos
+• Ajudar nos seus projetos`;
+    }
+    adicionarMensagem(
+        resposta,
+        "ai"
+    );
+}
+/* ==========================================
+   PAINEL
+========================================== */
+function abrirPainel(){
+    document.getElementById(
+        "painel"
+    ).style.display = "flex";
+}
+function fecharPainel(){
+    document.getElementById(
+        "painel"
+    ).style.display = "none";
+}
+/* ==========================================
+   MEMÓRIAS
+========================================== */
+function mostrarMemorias(){
+    fecharPainel();
+    const modal =
+        document.getElementById(
+            "memoriaModal"
+        );
+    const lista =
+        document.getElementById(
+            "listaMemorias"
+        );
+    const memorias =
+        obterMemorias();
+    if(memorias.length === 0){
+        lista.innerHTML =
+        `<p style="color:#8d98aa">
+        Nenhuma memória salva ainda.
+        </p>`;
+    }else{
+        lista.innerHTML = "";
+        memorias
+        .slice()
+        .reverse()
+        .forEach(function(memoria){
+            const div =
+                document.createElement("div");
+            div.className =
+                "memory-item";
+            div.innerHTML = `
+                <small>${memoria.data}</small>
+                <div>${escaparHTML(memoria.texto)}</div>
+                <button
+                    class="delete-memory"
+                    onclick="removerMemoria(${memoria.id})">
+                    🗑️ Esquecer
+                </button>
+            `;
+            lista.appendChild(div);
+        });
+    }
+    modal.style.display = "flex";
+}
+function fecharMemoria(){
+    document.getElementById(
+        "memoriaModal"
+    ).style.display = "none";
+}
+function novaMemoria(){
+    fecharPainel();
+    document.getElementById(
+        "novaMemoriaModal"
+    ).style.display = "flex";
+}
+function fecharNovaMemoria(){
+    document.getElementById(
+        "novaMemoriaModal"
+    ).style.display = "none";
+}
+function salvarNovaMemoria(){
+    const campo =
+        document.getElementById(
+            "novaMemoriaTexto"
+        );
+    const texto =
+        campo.value.trim();
+    if(!texto){
+        alert("Digite uma memória.");
+        return;
+    }
+    adicionarMemoria(texto);
+    campo.value = "";
+    fecharNovaMemoria();
+    mostrarMemorias();
+}
+/* ==========================================
+   EXPORTAR MEMÓRIA
+========================================== */
+function exportarMemoria(){
+    const dados = {
+        versao:1,
+        criadoEm:new Date().toISOString(),
+        memorias:obterMemorias()
+    };
+    const blob =
+        new Blob(
+            [JSON.stringify(dados,null,2)],
+            {type:"application/json"}
+        );
+    const url =
+        URL.createObjectURL(blob);
+    const a =
+        document.createElement("a");
+    a.href = url;
+    a.download =
+        "minha-ia-memoria.json";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+function importarMemoria(){
+    document.getElementById(
+        "arquivoMemoria"
+    ).click();
+}
+document.getElementById(
+    "arquivoMemoria"
+).addEventListener(
+    "change",
+    function(event){
+        const arquivo =
+            event.target.files[0];
+        if(!arquivo) return;
+        const reader =
+            new FileReader();
+        reader.onload =
+            function(){
+                try{
+                    const dados =
+                        JSON.parse(
+                            reader.result
+                        );
+                    if(
+                        !dados.memorias ||
+                        !Array.isArray(
+                            dados.memorias
+                        )
+                    ){
+                        throw new Error();
+                    }
+                    salvarMemorias(
+                        dados.memorias
+                    );
+                    alert(
+                        "Memórias importadas com sucesso!"
+                    );
+                }catch(e){
+                    alert(
+                        "Arquivo de memória inválido."
+                    );
+                }
+            };
+        reader.readAsText(arquivo);
+    }
+);
+/* ==========================================
+   CHAT LOCAL
+========================================== */
+function salvarChat(){
+    localStorage.setItem(
+        CHAT_KEY,
+        chat.innerHTML
+    );
+}
+function carregarChat(){
+    const salvo =
+        localStorage.getItem(
+            CHAT_KEY
+        );
+    if(salvo){
+        chat.innerHTML = salvo;
+    }
+}
+function limparConversa(){
+    if(
+        !confirm(
+            "Deseja apagar a conversa deste aparelho?"
+        )
+    ) return;
+    localStorage.removeItem(
+        CHAT_KEY
+    );
+    location.reload();
+}
+function apagarTudo(){
+    if(
+        !confirm(
+            "ATENÇÃO: apagar todas as memórias?"
+        )
+    ) return;
+    localStorage.removeItem(
+        MEMORY_KEY
+    );
+    alert(
+        "Todas as memórias foram apagadas."
+    );
+    fecharPainel();
+}
+function escaparHTML(texto){
+    return texto
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+/* ==========================================
+   INICIALIZAÇÃO
+========================================== */
+carregarChat();
+</script>
+</body>
+</html>
