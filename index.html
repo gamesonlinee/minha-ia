@@ -48,7 +48,6 @@ header{
     background:linear-gradient(135deg,#6366f1,#8b5cf6);
     box-shadow:0 5px 20px rgba(99,102,241,.25);
 }
-    
 .title{
     flex:1;
 }
@@ -154,6 +153,7 @@ header{
 .send{
     width:48px;
     height:48px;
+    border:0;
     border-radius:14px;
     background:#6366f1;
     color:white;
@@ -266,6 +266,11 @@ textarea{
     color:white;
     cursor:pointer;
 }
+.loading{
+    text-align:center;
+    color:#7f8ba0;
+    padding:20px;
+}
 /* DESKTOP */
 @media(min-width:700px){
     body{
@@ -306,8 +311,7 @@ textarea{
     <div class="message ai">
 Olá! 👋
 Eu sou a sua Central IA.
-Nesta primeira versão já tenho:
-🧠 Memória
+🧠 Memória na nuvem
 💬 Histórico
 📚 Faculdade
 💰 Finanças
@@ -316,7 +320,7 @@ Nesta primeira versão já tenho:
 🎨 Imagens
 📁 Arquivos
 🎙️ Voz
-O cérebro de IA será conectado na próxima etapa.
+A conexão com o Firebase está sendo inicializada.
 Você também pode me dizer:
 “Guarde que meu projeto é importante.”
 ou
@@ -355,8 +359,8 @@ ou
             ➤
         </button>
     </div>
-    <div class="status">
-        Central IA • Memória local ativada
+    <div class="status" id="status">
+        Conectando à memória na nuvem...
     </div>
 </div>
 </div>
@@ -398,7 +402,11 @@ ou
                 ✕
             </button>
         </div>
-        <div id="listaMemorias"></div>
+        <div id="listaMemorias">
+            <div class="loading">
+                Carregando memórias...
+            </div>
+        </div>
     </div>
 </div>
 <!-- MODAL NOVA MEMÓRIA -->
@@ -425,65 +433,304 @@ ou
     accept=".json"
     style="display:none"
 >
-<script>
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
+    orderBy,
+    serverTimestamp,
+    setDoc,
+    getDoc
+}
+from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 /* ==========================================
-   BANCO DE MEMÓRIA LOCAL
+   CONFIGURAÇÃO DO FIREBASE
 ========================================== */
-const MEMORY_KEY = "minha_ia_memorias_v1";
-const CHAT_KEY = "minha_ia_chat_v1";
-function obterMemorias(){
-    try{
-        return JSON.parse(
-            localStorage.getItem(MEMORY_KEY)
-        ) || [];
-    }catch(e){
-        return [];
-    }
-}
-function salvarMemorias(memorias){
-    localStorage.setItem(
-        MEMORY_KEY,
-        JSON.stringify(memorias)
-    );
-}
-function adicionarMemoria(texto){
-    texto = texto.trim();
-    if(!texto) return false;
-    const memorias = obterMemorias();
-    const memoria = {
-        id:Date.now(),
-        texto:texto,
-        data:new Date().toLocaleString("pt-BR")
-    };
-    memorias.push(memoria);
-    salvarMemorias(memorias);
-    return true;
-}
-function removerMemoria(id){
-    const memorias = obterMemorias()
-        .filter(m => m.id !== id);
-    salvarMemorias(memorias);
-    mostrarMemorias();
-}
+const firebaseConfig = {
+    apiKey: "AIzaSyB_DdJSOnJbrU-69jxSL36rXmuNCUa9iwA",
+    authDomain: "minha-ia-4756b.firebaseapp.com",
+    projectId: "minha-ia-4756b",
+    storageBucket: "minha-ia-4756b.firebasestorage.app",
+    messagingSenderId: "319954826530",
+    appId: "1:319954826530:web:03f3fb2fe5a855bf73217b"
+};
 /* ==========================================
-   CHAT
+   INICIALIZAR FIREBASE
+========================================== */
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+/* ==========================================
+   USUÁRIO
+========================================== */
+let usuarioAtual = null;
+/* ==========================================
+   ELEMENTOS
 ========================================== */
 const promptInput =
     document.getElementById("prompt");
 const chat =
     document.getElementById("chat");
-function adicionarMensagem(texto,tipo){
+const status =
+    document.getElementById("status");
+/* ==========================================
+   LOGIN ANÔNIMO
+========================================== */
+signInAnonymously(auth)
+.then(() => {
+    status.textContent =
+        "🧠 Memória na nuvem ativada";
+})
+.catch((erro) => {
+    console.error(erro);
+    status.textContent =
+        "⚠️ Erro ao conectar ao Firebase";
+    adicionarMensagem(
+        "⚠️ Não consegui conectar ao Firebase.\n\nVerifique se o login anônimo está ativado no Firebase.",
+        "ai"
+    );
+});
+/* ==========================================
+   IDENTIFICAR USUÁRIO
+========================================== */
+onAuthStateChanged(auth, async (user) => {
+    if(!user) return;
+    usuarioAtual = user;
+    status.textContent =
+        "🧠 Memória na nuvem ativada";
+    console.log(
+        "Usuário Firebase:",
+        user.uid
+    );
+    await carregarChatNuvem();
+});
+/* ==========================================
+   CAMINHOS DO FIRESTORE
+========================================== */
+function memoriaCollection(){
+    if(!usuarioAtual) return null;
+    return collection(
+        db,
+        "memoria",
+        usuarioAtual.uid,
+        "itens"
+    );
+}
+function conversaCollection(){
+    if(!usuarioAtual) return null;
+    return collection(
+        db,
+        "conversas",
+        usuarioAtual.uid,
+        "mensagens"
+    );
+}
+/* ==========================================
+   MEMÓRIA
+========================================== */
+async function obterMemorias(){
+    if(!usuarioAtual){
+        return [];
+    }
+    try{
+        const referencia =
+            memoriaCollection();
+        const consulta =
+            query(
+                referencia,
+                orderBy("criadoEm","asc")
+            );
+        const resultado =
+            await getDocs(consulta);
+        const memorias = [];
+        resultado.forEach((item) => {
+            const dados = item.data();
+            memorias.push({
+                id:item.id,
+                texto:dados.texto || "",
+                data:dados.data || ""
+            });
+        });
+        return memorias;
+    }catch(erro){
+        console.error(
+            "Erro ao carregar memórias:",
+            erro
+        );
+        return [];
+    }
+}
+/* ==========================================
+   ADICIONAR MEMÓRIA
+========================================== */
+async function adicionarMemoria(texto){
+    texto = texto.trim();
+    if(!texto) return false;
+    if(!usuarioAtual){
+        alert(
+            "Aguarde a conexão com o Firebase."
+        );
+        return false;
+    }
+    try{
+        await addDoc(
+            memoriaCollection(),
+            {
+                texto:texto,
+                data:new Date()
+                    .toLocaleString("pt-BR"),
+                criadoEm:serverTimestamp()
+            }
+        );
+        return true;
+    }catch(erro){
+        console.error(
+            "Erro ao salvar memória:",
+            erro
+        );
+        alert(
+            "Não foi possível salvar a memória."
+        );
+        return false;
+    }
+}
+/* ==========================================
+   REMOVER MEMÓRIA
+========================================== */
+async function removerMemoria(id){
+    if(!usuarioAtual) return;
+    try{
+        await deleteDoc(
+            doc(
+                db,
+                "memoria",
+                usuarioAtual.uid,
+                "itens",
+                id
+            )
+        );
+        await mostrarMemorias();
+    }catch(erro){
+        console.error(
+            "Erro ao apagar memória:",
+            erro
+        );
+        alert(
+            "Não foi possível apagar a memória."
+        );
+    }
+}
+/* ==========================================
+   CHAT
+========================================== */
+function adicionarMensagem(
+    texto,
+    tipo,
+    salvar = true
+){
     const div =
         document.createElement("div");
     div.className =
         "message " + tipo;
-    div.textContent = texto;
+    div.textContent =
+        texto;
     chat.appendChild(div);
     chat.scrollTop =
         chat.scrollHeight;
-    salvarChat();
+    if(
+        salvar &&
+        usuarioAtual
+    ){
+        salvarMensagemNuvem(
+            texto,
+            tipo
+        );
+    }
 }
-function enviar(){
+/* ==========================================
+   SALVAR MENSAGEM NO FIRESTORE
+========================================== */
+async function salvarMensagemNuvem(
+    texto,
+    tipo
+){
+    if(!usuarioAtual) return;
+    try{
+        await addDoc(
+            conversaCollection(),
+            {
+                texto:texto,
+                tipo:tipo,
+                criadoEm:serverTimestamp()
+            }
+        );
+    }catch(erro){
+        console.error(
+            "Erro ao salvar conversa:",
+            erro
+        );
+    }
+}
+/* ==========================================
+   CARREGAR CHAT DA NUVEM
+========================================== */
+async function carregarChatNuvem(){
+    if(!usuarioAtual) return;
+    try{
+        const referencia =
+            conversaCollection();
+        const consulta =
+            query(
+                referencia,
+                orderBy("criadoEm","asc")
+            );
+        const resultado =
+            await getDocs(consulta);
+        if(
+            resultado.empty
+        ){
+            return;
+        }
+        chat.innerHTML = "";
+        resultado.forEach((item) => {
+            const dados =
+                item.data();
+            if(
+                dados.texto &&
+                dados.tipo
+            ){
+                adicionarMensagem(
+                    dados.texto,
+                    dados.tipo,
+                    false
+                );
+            }
+        });
+    }catch(erro){
+        console.error(
+            "Erro ao carregar histórico:",
+            erro
+        );
+    }
+}
+/* ==========================================
+   ENVIAR
+========================================== */
+window.enviar = async function(){
     const texto =
         promptInput.value.trim();
     if(!texto) return;
@@ -492,20 +739,34 @@ function enviar(){
         "user"
     );
     promptInput.value = "";
-    /* MEMÓRIA */
     const lower =
         texto.toLowerCase();
+    /* MEMÓRIA */
     if(
         lower.startsWith("guarde ") ||
         lower.startsWith("lembre ") ||
         lower.startsWith("memorize ")
     ){
-        let memoria = texto
-            .replace(/^guarde\s*/i,"")
-            .replace(/^lembre\s*/i,"")
-            .replace(/^memorize\s*/i,"")
+        let memoria =
+            texto
+            .replace(
+                /^guarde\s*/i,
+                ""
+            )
+            .replace(
+                /^lembre\s*/i,
+                ""
+            )
+            .replace(
+                /^memorize\s*/i,
+                ""
+            )
             .trim();
-        if(adicionarMemoria(memoria)){
+        const sucesso =
+            await adicionarMemoria(
+                memoria
+            );
+        if(sucesso){
             adicionarMensagem(
                 "🧠 Salvei essa informação na sua memória.\n\n" +
                 memoria,
@@ -514,45 +775,56 @@ function enviar(){
         }
         return;
     }
+    /* MOSTRAR MEMÓRIAS */
     if(
         lower.includes("minhas memórias") ||
         lower.includes("minhas memorias") ||
         lower.includes("o que você lembra") ||
         lower.includes("o que voce lembra")
     ){
-        mostrarMemorias();
+        await mostrarMemorias();
         return;
     }
     /* RESPOSTA TEMPORÁRIA */
-    setTimeout(function(){
-        const memorias =
-            obterMemorias();
-        let resposta =
+    setTimeout(
+        async function(){
+            const memorias =
+                await obterMemorias();
+            let resposta =
 `Entendi. 🤖
 Você disse:
 "${texto}"
-Minha estrutura de memória está funcionando.
+Minha memória na nuvem está funcionando.
 `;
-        if(memorias.length > 0){
-            resposta +=
-`🧠 Tenho ${memorias.length} memória(s) salva(s).
+            if(
+                memorias.length > 0
+            ){
+                resposta +=
+`\n🧠 Tenho ${memorias.length} memória(s) salva(s).
 Quando conectarmos o cérebro de IA, vou poder utilizar essas informações para responder de maneira personalizada.`;
-        }else{
-            resposta +=
-`Ainda não tenho memórias salvas.
+            }else{
+                resposta +=
+`\nAinda não tenho memórias salvas.
 Você pode dizer:
 “Guarde que ...”`;
-        }
-        adicionarMensagem(
-            resposta,
-            "ai"
-        );
-    },500);
-}
+            }
+            adicionarMensagem(
+                resposta,
+                "ai"
+            );
+        },
+        500
+    );
+};
+/* ==========================================
+   ENTER
+========================================== */
 promptInput.addEventListener(
     "keydown",
     function(event){
-        if(event.key === "Enter"){
+        if(
+            event.key === "Enter"
+        ){
             enviar();
         }
     }
@@ -560,13 +832,15 @@ promptInput.addEventListener(
 /* ==========================================
    FERRAMENTAS
 ========================================== */
-function ferramenta(nome){
+window.ferramenta = function(nome){
     adicionarMensagem(
         nome,
         "user"
     );
     let resposta = "";
-    if(nome.includes("IMAGEM")){
+    if(
+        nome.includes("IMAGEM")
+    ){
         resposta =
 `🎨 GERADOR DE IMAGENS
 A ferramenta está preparada.
@@ -574,13 +848,17 @@ Na próxima etapa vamos conectar um gerador de imagens de verdade.
 Você poderá pedir algo como:
 “Crie uma capa para meu livro infantil.”`;
     }
-    else if(nome.includes("PDF")){
+    else if(
+        nome.includes("PDF")
+    ){
         resposta =
 `📄 GERADOR DE PDF
 Podemos transformar textos, trabalhos, relatórios e conteúdos da IA em PDF.
 Na próxima etapa vamos deixar o gerador mais completo.`;
     }
-    else if(nome.includes("FINANÇAS")){
+    else if(
+        nome.includes("FINANÇAS")
+    ){
         resposta =
 `💰 MODO FINANÇAS
 Aqui vamos colocar:
@@ -591,7 +869,9 @@ Aqui vamos colocar:
 • Gráficos
 • Comparação de cenários`;
     }
-    else if(nome.includes("FACULDADE")){
+    else if(
+        nome.includes("FACULDADE")
+    ){
         resposta =
 `📚 MODO FACULDADE
 A IA poderá ajudar com:
@@ -603,7 +883,9 @@ A IA poderá ajudar com:
 • Resumos
 • Exercícios`;
     }
-    else if(nome.includes("PROGRAMAÇÃO")){
+    else if(
+        nome.includes("PROGRAMAÇÃO")
+    ){
         resposta =
 `💻 MODO PROGRAMAÇÃO
 A IA poderá:
@@ -618,24 +900,24 @@ A IA poderá:
         resposta,
         "ai"
     );
-}
+};
 /* ==========================================
    PAINEL
 ========================================== */
-function abrirPainel(){
+window.abrirPainel = function(){
     document.getElementById(
         "painel"
     ).style.display = "flex";
-}
-function fecharPainel(){
+};
+window.fecharPainel = function(){
     document.getElementById(
         "painel"
     ).style.display = "none";
-}
+};
 /* ==========================================
-   MEMÓRIAS
+   MOSTRAR MEMÓRIAS
 ========================================== */
-function mostrarMemorias(){
+window.mostrarMemorias = async function(){
     fecharPainel();
     const modal =
         document.getElementById(
@@ -645,54 +927,78 @@ function mostrarMemorias(){
         document.getElementById(
             "listaMemorias"
         );
+    lista.innerHTML =
+        `<div class="loading">
+            🧠 Carregando memória...
+        </div>`;
+    modal.style.display =
+        "flex";
     const memorias =
-        obterMemorias();
-    if(memorias.length === 0){
+        await obterMemorias();
+    if(
+        memorias.length === 0
+    ){
         lista.innerHTML =
         `<p style="color:#8d98aa">
-        Nenhuma memória salva ainda.
+            Nenhuma memória salva ainda.
         </p>`;
-    }else{
-        lista.innerHTML = "";
-        memorias
-        .slice()
-        .reverse()
-        .forEach(function(memoria){
+        return;
+    }
+    lista.innerHTML = "";
+    memorias
+    .slice()
+    .reverse()
+    .forEach(
+        function(memoria){
             const div =
-                document.createElement("div");
+                document.createElement(
+                    "div"
+                );
             div.className =
                 "memory-item";
             div.innerHTML = `
-                <small>${memoria.data}</small>
-                <div>${escaparHTML(memoria.texto)}</div>
+                <small>
+                    ${escaparHTML(
+                        memoria.data
+                    )}
+                </small>
+                <div>
+                    ${escaparHTML(
+                        memoria.texto
+                    )}
+                </div>
                 <button
                     class="delete-memory"
-                    onclick="removerMemoria(${memoria.id})">
+                    onclick="removerMemoria('${memoria.id}')">
                     🗑️ Esquecer
                 </button>
             `;
-            lista.appendChild(div);
-        });
-    }
-    modal.style.display = "flex";
-}
-function fecharMemoria(){
+            lista.appendChild(
+                div
+            );
+        }
+    );
+};
+window.fecharMemoria = function(){
     document.getElementById(
         "memoriaModal"
     ).style.display = "none";
-}
-function novaMemoria(){
+};
+/* ==========================================
+   NOVA MEMÓRIA
+========================================== */
+window.novaMemoria = function(){
     fecharPainel();
     document.getElementById(
         "novaMemoriaModal"
     ).style.display = "flex";
-}
-function fecharNovaMemoria(){
+};
+window.fecharNovaMemoria = function(){
     document.getElementById(
         "novaMemoriaModal"
     ).style.display = "none";
-}
-function salvarNovaMemoria(){
+};
+window.salvarNovaMemoria = async function(){
     const campo =
         document.getElementById(
             "novaMemoriaTexto"
@@ -700,55 +1006,83 @@ function salvarNovaMemoria(){
     const texto =
         campo.value.trim();
     if(!texto){
-        alert("Digite uma memória.");
+        alert(
+            "Digite uma memória."
+        );
         return;
     }
-    adicionarMemoria(texto);
-    campo.value = "";
-    fecharNovaMemoria();
-    mostrarMemorias();
-}
+    const sucesso =
+        await adicionarMemoria(
+            texto
+        );
+    if(sucesso){
+        campo.value = "";
+        fecharNovaMemoria();
+        await mostrarMemorias();
+    }
+};
 /* ==========================================
    EXPORTAR MEMÓRIA
 ========================================== */
-function exportarMemoria(){
+window.exportarMemoria = async function(){
+    const memorias =
+        await obterMemorias();
     const dados = {
-        versao:1,
-        criadoEm:new Date().toISOString(),
-        memorias:obterMemorias()
+        versao:2,
+        criadoEm:
+            new Date().toISOString(),
+        memorias:memorias
     };
     const blob =
         new Blob(
-            [JSON.stringify(dados,null,2)],
-            {type:"application/json"}
+            [
+                JSON.stringify(
+                    dados,
+                    null,
+                    2
+                )
+            ],
+            {
+                type:
+                "application/json"
+            }
         );
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
     const a =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
     a.href = url;
     a.download =
         "minha-ia-memoria.json";
     a.click();
-    URL.revokeObjectURL(url);
-}
-function importarMemoria(){
+    URL.revokeObjectURL(
+        url
+    );
+};
+/* ==========================================
+   IMPORTAR MEMÓRIA
+========================================== */
+window.importarMemoria = function(){
     document.getElementById(
         "arquivoMemoria"
     ).click();
-}
+};
 document.getElementById(
     "arquivoMemoria"
 ).addEventListener(
     "change",
-    function(event){
+    async function(event){
         const arquivo =
             event.target.files[0];
         if(!arquivo) return;
         const reader =
             new FileReader();
         reader.onload =
-            function(){
+            async function(){
                 try{
                     const dados =
                         JSON.parse(
@@ -762,76 +1096,157 @@ document.getElementById(
                     ){
                         throw new Error();
                     }
-                    salvarMemorias(
-                        dados.memorias
-                    );
+                    for(
+                        const memoria
+                        of dados.memorias
+                    ){
+                        if(
+                            memoria.texto
+                        ){
+                            await adicionarMemoria(
+                                memoria.texto
+                            );
+                        }
+                    }
                     alert(
                         "Memórias importadas com sucesso!"
                     );
                 }catch(e){
+                    console.error(e);
                     alert(
                         "Arquivo de memória inválido."
                     );
                 }
             };
-        reader.readAsText(arquivo);
+        reader.readAsText(
+            arquivo
+        );
     }
 );
 /* ==========================================
-   CHAT LOCAL
+   LIMPAR CONVERSA
 ========================================== */
-function salvarChat(){
-    localStorage.setItem(
-        CHAT_KEY,
-        chat.innerHTML
-    );
-}
-function carregarChat(){
-    const salvo =
-        localStorage.getItem(
-            CHAT_KEY
+window.limparConversa = async function(){
+    if(
+        !usuarioAtual
+    ){
+        alert(
+            "Aguarde a conexão com o Firebase."
         );
-    if(salvo){
-        chat.innerHTML = salvo;
+        return;
     }
-}
-function limparConversa(){
     if(
         !confirm(
-            "Deseja apagar a conversa deste aparelho?"
+            "Deseja apagar toda a conversa deste usuário?"
         )
-    ) return;
-    localStorage.removeItem(
-        CHAT_KEY
-    );
-    location.reload();
-}
-function apagarTudo(){
-    if(
-        !confirm(
-            "ATENÇÃO: apagar todas as memórias?"
-        )
-    ) return;
-    localStorage.removeItem(
-        MEMORY_KEY
-    );
-    alert(
-        "Todas as memórias foram apagadas."
-    );
-    fecharPainel();
-}
-function escaparHTML(texto){
-    return texto
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;")
-        .replace(/"/g,"&quot;")
-        .replace(/'/g,"&#039;");
-}
+    ){
+        return;
+    }
+    try{
+        const referencia =
+            conversaCollection();
+        const resultado =
+            await getDocs(
+                referencia
+            );
+        for(
+            const item
+            of resultado.docs
+        ){
+            await deleteDoc(
+                item.ref
+            );
+        }
+        chat.innerHTML = `
+            <div class="message ai">
+                Conversa limpa. 🗑️
+                Sua memória continua salva.
+            </div>
+        `;
+        fecharPainel();
+    }catch(erro){
+        console.error(
+            erro
+        );
+        alert(
+            "Não foi possível limpar a conversa."
+        );
+    }
+};
 /* ==========================================
-   INICIALIZAÇÃO
+   APAGAR TODAS AS MEMÓRIAS
 ========================================== */
-carregarChat();
+window.apagarTudo = async function(){
+    if(
+        !usuarioAtual
+    ){
+        alert(
+            "Aguarde a conexão com o Firebase."
+        );
+        return;
+    }
+    if(
+        !confirm(
+            "ATENÇÃO: apagar TODAS as memórias?"
+        )
+    ){
+        return;
+    }
+    try{
+        const referencia =
+            memoriaCollection();
+        const resultado =
+            await getDocs(
+                referencia
+            );
+        for(
+            const item
+            of resultado.docs
+        ){
+            await deleteDoc(
+                item.ref
+            );
+        }
+        alert(
+            "Todas as memórias foram apagadas."
+        );
+        fecharPainel();
+        await mostrarMemorias();
+    }catch(erro){
+        console.error(
+            erro
+        );
+        alert(
+            "Não foi possível apagar as memórias."
+        );
+    }
+};
+/* ==========================================
+   ESCAPAR HTML
+========================================== */
+function escaparHTML(texto){
+    return String(texto)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
 </script>
 </body>
 </html>
