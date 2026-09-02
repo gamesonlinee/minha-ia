@@ -1,1 +1,1775 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#080808">
 
+<title>Minha IA</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+:root{
+    --bg:#080808;
+    --panel:#111111;
+    --panel2:#171717;
+    --border:#292929;
+    --text:#f5f5f5;
+    --muted:#999;
+    --accent:#7c3aed;
+    --accent2:#06b6d4;
+    --danger:#ef4444;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top left,#241044 0%,transparent 35%),
+        radial-gradient(circle at bottom right,#073b46 0%,transparent 30%),
+        var(--bg);
+    color:var(--text);
+    min-height:100vh;
+}
+
+button,
+input,
+textarea{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    width:100%;
+    max-width:1200px;
+    height:100vh;
+    margin:auto;
+    display:flex;
+    flex-direction:column;
+}
+
+/* HEADER */
+
+header{
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 20px;
+    border-bottom:1px solid var(--border);
+    background:rgba(8,8,8,.75);
+    backdrop-filter:blur(20px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo{
+    width:44px;
+    height:44px;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:23px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 0 25px rgba(124,58,237,.35);
+}
+
+.brand h1{
+    font-size:19px;
+}
+
+.status{
+    font-size:12px;
+    color:#22c55e;
+    margin-top:3px;
+}
+
+.header-actions{
+    display:flex;
+    gap:8px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#121212;
+    color:white;
+}
+
+/* CHAT */
+
+.chat{
+    flex:1;
+    overflow-y:auto;
+    padding:25px 18px 140px;
+}
+
+.welcome{
+    max-width:700px;
+    margin:50px auto;
+    text-align:center;
+}
+
+.welcome-logo{
+    width:80px;
+    height:80px;
+    margin:auto;
+    border-radius:25px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:40px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 0 50px rgba(124,58,237,.35);
+}
+
+.welcome h2{
+    margin-top:20px;
+    font-size:30px;
+}
+
+.welcome p{
+    margin-top:10px;
+    color:var(--muted);
+}
+
+.message{
+    max-width:850px;
+    margin:0 auto 20px;
+    display:flex;
+}
+
+.message.user{
+    justify-content:flex-end;
+}
+
+.bubble{
+    max-width:80%;
+    padding:14px 16px;
+    border-radius:18px;
+    line-height:1.55;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.message.ai .bubble{
+    background:#151515;
+    border:1px solid var(--border);
+}
+
+.message.user .bubble{
+    background:linear-gradient(135deg,#5b21b6,#7c3aed);
+}
+
+/* THINKING */
+
+.thinking{
+    display:flex;
+    gap:5px;
+    padding:15px;
+}
+
+.thinking span{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+    background:#aaa;
+    animation:pulse 1s infinite;
+}
+
+.thinking span:nth-child(2){
+    animation-delay:.15s;
+}
+
+.thinking span:nth-child(3){
+    animation-delay:.3s;
+}
+
+@keyframes pulse{
+    0%,100%{opacity:.2}
+    50%{opacity:1}
+}
+
+/* BOTTOM */
+
+.bottom{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    padding:12px;
+    background:linear-gradient(transparent,#080808 25%);
+}
+
+.bottom-inner{
+    max-width:900px;
+    margin:auto;
+}
+
+/* TOOLS */
+
+.tools{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding-bottom:10px;
+}
+
+.tool{
+    white-space:nowrap;
+    border:1px solid var(--border);
+    background:#111;
+    color:#ddd;
+    padding:9px 12px;
+    border-radius:12px;
+}
+
+.tool:hover{
+    border-color:#555;
+}
+
+/* INPUT */
+
+.input-area{
+    display:flex;
+    gap:8px;
+    padding:8px;
+    border:1px solid var(--border);
+    background:rgba(18,18,18,.95);
+    border-radius:18px;
+}
+
+#input{
+    flex:1;
+    border:0;
+    outline:none;
+    resize:none;
+    background:transparent;
+    color:white;
+    padding:10px;
+    min-height:44px;
+    max-height:130px;
+}
+
+.send{
+    width:48px;
+    border:0;
+    border-radius:13px;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:white;
+    font-size:20px;
+}
+
+/* MODAL */
+
+.modal-bg{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.7);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:100;
+}
+
+.modal-bg.active{
+    display:flex;
+}
+
+.modal{
+    width:100%;
+    max-width:520px;
+    max-height:90vh;
+    overflow:auto;
+    background:#111;
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:22px;
+}
+
+.modal h3{
+    margin-bottom:15px;
+}
+
+.modal p{
+    color:#aaa;
+    line-height:1.5;
+}
+
+.modal-buttons{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin-top:20px;
+}
+
+.modal-buttons button{
+    padding:13px;
+    border-radius:12px;
+    border:1px solid var(--border);
+    background:#181818;
+    color:white;
+}
+
+.close{
+    float:right;
+    background:none;
+    border:0;
+    color:#aaa;
+    font-size:22px;
+}
+
+/* DEBUG */
+
+.debug{
+    margin-top:20px;
+    padding:14px;
+    background:#090909;
+    border:1px solid #333;
+    border-radius:12px;
+    font-size:12px;
+    color:#aaa;
+    white-space:pre-wrap;
+    word-break:break-word;
+}
+
+.success{
+    color:#22c55e;
+}
+
+.error{
+    color:#ef4444;
+}
+
+.warning{
+    color:#f59e0b;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    header{
+        padding:0 12px;
+    }
+
+    .brand h1{
+        font-size:17px;
+    }
+
+    .chat{
+        padding-left:12px;
+        padding-right:12px;
+    }
+
+    .bubble{
+        max-width:90%;
+    }
+
+    .welcome h2{
+        font-size:25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+    <div class="brand">
+
+        <div class="logo">🤖</div>
+
+        <div>
+            <h1>Minha IA</h1>
+            <div class="status" id="status">
+                Conectando...
+            </div>
+        </div>
+
+    </div>
+
+    <div class="header-actions">
+
+        <button class="icon-btn" onclick="openMemory()">
+            🧠
+        </button>
+
+        <button class="icon-btn" onclick="openMenu()">
+            ☰
+        </button>
+
+    </div>
+
+</header>
+
+
+<main class="chat" id="chat">
+
+    <div class="welcome" id="welcome">
+
+        <div class="welcome-logo">
+            🤖
+        </div>
+
+        <h2>Olá! Eu sou a Minha IA.</h2>
+
+        <p>
+            Seu assistente pessoal conectado ao Firebase AI Logic.
+        </p>
+
+    </div>
+
+</main>
+
+
+<div class="bottom">
+
+    <div class="bottom-inner">
+
+        <div class="tools">
+
+            <button class="tool" onclick="setMode('imagem')">
+                🎨 Imagem
+            </button>
+
+            <button class="tool" onclick="setMode('pdf')">
+                📄 PDF
+            </button>
+
+            <button class="tool" onclick="setMode('financas')">
+                💰 Finanças
+            </button>
+
+            <button class="tool" onclick="setMode('faculdade')">
+                📚 Faculdade
+            </button>
+
+            <button class="tool" onclick="setMode('codigo')">
+                💻 Código
+            </button>
+
+            <button class="tool" onclick="openMemory()">
+                🧠 Memória
+            </button>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <textarea
+                id="input"
+                placeholder="Digite sua mensagem..."
+                rows="1"
+            ></textarea>
+
+            <button class="send" onclick="sendMessage()">
+                ➤
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- MENU -->
+
+<div class="modal-bg" id="menuModal">
+
+    <div class="modal">
+
+        <button class="close" onclick="closeMenu()">×</button>
+
+        <h3>⚙️ Minha IA</h3>
+
+        <p>
+            Configurações e ferramentas do aplicativo.
+        </p>
+
+        <div class="modal-buttons">
+
+            <button onclick="testGemini()">
+                🧪 Testar Gemini
+            </button>
+
+            <button onclick="openMemory()">
+                🧠 Gerenciar memória
+            </button>
+
+            <button onclick="clearChat()">
+                🗑️ Limpar conversa
+            </button>
+
+        </div>
+
+        <div id="debugBox" class="debug">
+            Nenhum teste executado ainda.
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MEMÓRIA -->
+
+<div class="modal-bg" id="memoryModal">
+
+    <div class="modal">
+
+        <button class="close" onclick="closeMemory()">×</button>
+
+        <h3>🧠 Memória</h3>
+
+        <p>
+            As informações salvas ficam vinculadas ao seu usuário
+            no Firestore.
+        </p>
+
+        <div id="memoryList" class="debug">
+            Carregando...
+        </div>
+
+        <div class="modal-buttons">
+
+            <button onclick="addMemory()">
+                ➕ Adicionar memória
+            </button>
+
+            <button onclick="loadMemories()">
+                🔄 Atualizar
+            </button>
+
+            <button onclick="deleteMemories()">
+                🗑️ Apagar memórias
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+    initializeApp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+
+import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    query,
+    orderBy,
+    serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+import {
+    getAI,
+    getGenerativeModel,
+    GoogleAIBackend
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-ai.js";
+
+
+/* =========================================================
+   CONFIGURAÇÃO DO SEU FIREBASE
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyB_DdJSOnJbrU-69jxSL36rXmuNCUa9iwA",
+
+    authDomain:
+        "minha-ia-4756b.firebaseapp.com",
+
+    projectId:
+        "minha-ia-4756b",
+
+    storageBucket:
+        "minha-ia-4756b.firebasestorage.app",
+
+    messagingSenderId:
+        "319954826530",
+
+    appId:
+        "1:319954826530:web:03f3fb2fe5a855bf73217b"
+};
+
+
+/* =========================================================
+   INICIALIZAÇÃO
+========================================================= */
+
+let app;
+let auth;
+let db;
+let ai;
+let model;
+
+let currentUser = null;
+
+let currentMode = "normal";
+
+let chatHistory = [];
+
+
+try {
+
+    console.log("Inicializando Firebase...");
+
+    app = initializeApp(firebaseConfig);
+
+    console.log("Firebase inicializado.");
+
+    auth = getAuth(app);
+
+    db = getFirestore(app);
+
+    /*
+       Firebase AI Logic
+       Gemini Developer API
+    */
+
+    ai = getAI(app, {
+        backend: new GoogleAIBackend()
+    });
+
+    /*
+       Modelo Gemini
+    */
+
+    model = getGenerativeModel(ai, {
+        model: "gemini-3.7-flash"
+    });
+
+    console.log("Firebase AI Logic inicializado.");
+
+    document.getElementById("status").textContent =
+        "Gemini pronto";
+
+    document.getElementById("status").className =
+        "status success";
+
+
+} catch(error){
+
+    console.error(
+        "Erro inicializando Firebase AI Logic:",
+        error
+    );
+
+    document.getElementById("status").textContent =
+        "Erro no Gemini";
+
+    document.getElementById("status").className =
+        "status error";
+}
+
+
+/* =========================================================
+   LOGIN ANÔNIMO
+========================================================= */
+
+signInAnonymously(auth)
+.then(() => {
+
+    console.log("Login anônimo iniciado.");
+
+})
+.catch(error => {
+
+    console.error(
+        "Erro no login anônimo:",
+        error
+    );
+
+    document.getElementById("status").textContent =
+        "Erro de autenticação";
+
+});
+
+
+/* =========================================================
+   USUÁRIO
+========================================================= */
+
+onAuthStateChanged(auth, user => {
+
+    if(user){
+
+        currentUser = user;
+
+        console.log(
+            "Usuário autenticado:",
+            user.uid
+        );
+
+        document.getElementById("status").textContent =
+            "Gemini conectado";
+
+        loadMemories();
+
+    }
+
+});
+
+
+/* =========================================================
+   ENVIA MENSAGEM
+========================================================= */
+
+window.sendMessage = async function(){
+
+    const input =
+        document.getElementById("input");
+
+    const text =
+        input.value.trim();
+
+    if(!text){
+        return;
+    }
+
+    if(!model){
+
+        addMessage(
+            "ai",
+            "⚠️ O Gemini ainda não foi inicializado. Abra o menu e toque em **Testar Gemini**."
+        );
+
+        return;
+    }
+
+
+    input.value = "";
+
+    hideWelcome();
+
+
+    addMessage(
+        "user",
+        text
+    );
+
+
+    const thinking =
+        addThinking();
+
+
+    try {
+
+        let prompt = `
+Você é a Minha IA, um assistente pessoal inteligente.
+
+Responda sempre em português do Brasil.
+
+Seja útil, claro e direto.
+
+`;
+
+        if(currentMode !== "normal"){
+
+            prompt += `
+O usuário selecionou o modo:
+${currentMode}
+
+Adapte sua resposta para esse modo.
+`;
+
+        }
+
+
+        /*
+           Memórias
+        */
+
+        const memories =
+            await getMemoryText();
+
+
+        if(memories){
+
+            prompt += `
+Memórias do usuário:
+
+${memories}
+
+Use essas informações somente quando forem relevantes.
+`;
+
+        }
+
+
+        /*
+           Histórico recente
+        */
+
+        if(chatHistory.length){
+
+            prompt += `
+Histórico recente:
+
+${chatHistory
+    .slice(-10)
+    .map(item =>
+        item.role + ": " + item.text
+    )
+    .join("\n")
+}
+
+`;
+
+        }
+
+
+        prompt += `
+Mensagem atual do usuário:
+
+${text}
+`;
+
+
+        console.log(
+            "Enviando para Gemini..."
+        );
+
+
+        const result =
+            await model.generateContent(prompt);
+
+
+        const response =
+            result.response;
+
+
+        const answer =
+            response.text();
+
+
+        removeThinking(thinking);
+
+
+        addMessage(
+            "ai",
+            answer
+        );
+
+
+        chatHistory.push({
+            role:"user",
+            text:text
+        });
+
+
+        chatHistory.push({
+            role:"assistant",
+            text:answer
+        });
+
+
+        /*
+           Comandos de memória
+        */
+
+        await detectMemoryCommand(text);
+
+
+    } catch(error){
+
+        console.error(
+            "ERRO COMPLETO GEMINI:",
+            error
+        );
+
+
+        removeThinking(thinking);
+
+
+        addMessage(
+            "ai",
+            createErrorMessage(error)
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   ERRO DETALHADO
+========================================================= */
+
+function createErrorMessage(error){
+
+    let message =
+        "⚠️ Não consegui falar com o cérebro da IA.\n\n";
+
+
+    if(error){
+
+        if(error.message){
+
+            message +=
+                "Erro:\n" +
+                error.message +
+                "\n\n";
+
+        }
+
+        if(error.code){
+
+            message +=
+                "Código:\n" +
+                error.code +
+                "\n\n";
+
+        }
+
+    }
+
+
+    message +=
+        "Abra ☰ → 🧪 Testar Gemini para descobrir exatamente onde está o problema.";
+
+
+    return message;
+}
+
+
+/* =========================================================
+   TESTE DO GEMINI
+========================================================= */
+
+window.testGemini = async function(){
+
+    const box =
+        document.getElementById("debugBox");
+
+
+    box.innerHTML =
+        "⏳ Testando Firebase AI Logic...\n";
+
+
+    try {
+
+        if(!app){
+
+            throw new Error(
+                "Firebase não foi inicializado."
+            );
+
+        }
+
+
+        box.innerHTML +=
+            "✅ Firebase inicializado.\n";
+
+
+        if(!ai){
+
+            throw new Error(
+                "Firebase AI Logic não foi inicializado."
+            );
+
+        }
+
+
+        box.innerHTML +=
+            "✅ Firebase AI Logic inicializado.\n";
+
+
+        if(!model){
+
+            throw new Error(
+                "Modelo Gemini não foi criado."
+            );
+
+        }
+
+
+        box.innerHTML +=
+            "✅ Modelo Gemini criado.\n";
+
+
+        box.innerHTML +=
+            "⏳ Enviando teste para o Gemini...\n";
+
+
+        const result =
+            await model.generateContent(
+                "Responda apenas: FUNCIONOU"
+            );
+
+
+        const answer =
+            result.response.text();
+
+
+        box.innerHTML +=
+            "\n✅ GEMINI RESPONDEU!\n\n" +
+            answer;
+
+
+        box.className =
+            "debug success";
+
+
+        document.getElementById("status").textContent =
+            "Gemini funcionando";
+
+        document.getElementById("status").className =
+            "status success";
+
+
+    } catch(error){
+
+        console.error(
+            "TESTE GEMINI FALHOU:",
+            error
+        );
+
+
+        box.className =
+            "debug error";
+
+
+        box.innerHTML =
+            "❌ GEMINI NÃO RESPONDEU\n\n" +
+
+            "Mensagem:\n" +
+            (error.message || "sem mensagem") +
+
+            "\n\nCódigo:\n" +
+            (error.code || "sem código") +
+
+            "\n\nTipo:\n" +
+            (error.name || "desconhecido") +
+
+            "\n\nAbra o console do navegador para detalhes.";
+
+
+        document.getElementById("status").textContent =
+            "Gemini com erro";
+
+        document.getElementById("status").className =
+            "status error";
+
+    }
+
+};
+
+
+/* =========================================================
+   CHAT UI
+========================================================= */
+
+function addMessage(role,text){
+
+    const chat =
+        document.getElementById("chat");
+
+
+    const message =
+        document.createElement("div");
+
+
+    message.className =
+        "message " + role;
+
+
+    const bubble =
+        document.createElement("div");
+
+
+    bubble.className =
+        "bubble";
+
+
+    bubble.textContent =
+        text;
+
+
+    message.appendChild(bubble);
+
+
+    chat.appendChild(message);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+}
+
+
+function addThinking(){
+
+    const chat =
+        document.getElementById("chat");
+
+
+    const message =
+        document.createElement("div");
+
+
+    message.className =
+        "message ai";
+
+
+    message.innerHTML = `
+        <div class="bubble thinking">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    `;
+
+
+    chat.appendChild(message);
+
+
+    chat.scrollTop =
+        chat.scrollHeight;
+
+
+    return message;
+
+}
+
+
+function removeThinking(element){
+
+    if(element){
+        element.remove();
+    }
+
+}
+
+
+function hideWelcome(){
+
+    const welcome =
+        document.getElementById("welcome");
+
+    if(welcome){
+        welcome.remove();
+    }
+
+}
+
+
+/* =========================================================
+   MODOS
+========================================================= */
+
+window.setMode = function(mode){
+
+    currentMode = mode;
+
+
+    const nomes = {
+
+        imagem:
+            "🎨 Modo imagem selecionado.",
+
+        pdf:
+            "📄 Modo PDF selecionado.",
+
+        financas:
+            "💰 Modo finanças selecionado.",
+
+        faculdade:
+            "📚 Modo faculdade selecionado.",
+
+        codigo:
+            "💻 Modo programação selecionado."
+
+    };
+
+
+    addMessage(
+        "ai",
+        nomes[mode] ||
+        "Modo selecionado."
+    );
+
+
+    document.getElementById("input").focus();
+
+};
+
+
+/* =========================================================
+   MEMÓRIA
+========================================================= */
+
+async function getMemoryText(){
+
+    if(!currentUser){
+        return "";
+    }
+
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            );
+
+
+        const snapshot =
+            await getDocs(ref);
+
+
+        const memories = [];
+
+
+        snapshot.forEach(item => {
+
+            const data =
+                item.data();
+
+            if(data.text){
+
+                memories.push(
+                    "- " + data.text
+                );
+
+            }
+
+        });
+
+
+        return memories.join("\n");
+
+
+    }catch(error){
+
+        console.error(
+            "Erro carregando memória:",
+            error
+        );
+
+        return "";
+
+    }
+
+}
+
+
+/* =========================================================
+   COMANDO DE MEMÓRIA
+========================================================= */
+
+async function detectMemoryCommand(text){
+
+    if(!currentUser){
+        return;
+    }
+
+
+    const lower =
+        text.toLowerCase();
+
+
+    const prefixes = [
+
+        "guarde ",
+        "lembre ",
+        "memorize ",
+        "lembra que "
+
+    ];
+
+
+    let memory = null;
+
+
+    for(const prefix of prefixes){
+
+        if(lower.startsWith(prefix)){
+
+            memory =
+                text.substring(prefix.length).trim();
+
+            break;
+
+        }
+
+    }
+
+
+    if(!memory){
+        return;
+    }
+
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            ),
+
+            {
+                text:memory,
+                createdAt:serverTimestamp()
+            }
+
+        );
+
+
+        addMessage(
+            "ai",
+            "🧠 Entendido. Salvei isso na minha memória."
+        );
+
+
+        loadMemories();
+
+
+    }catch(error){
+
+        console.error(
+            "Erro salvando memória:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LISTAR MEMÓRIAS
+========================================================= */
+
+window.loadMemories = async function(){
+
+    const list =
+        document.getElementById("memoryList");
+
+
+    if(!list){
+        return;
+    }
+
+
+    if(!currentUser){
+
+        list.textContent =
+            "Usuário ainda não autenticado.";
+
+        return;
+
+    }
+
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            );
+
+
+        const q =
+            query(
+                ref,
+                orderBy(
+                    "createdAt",
+                    "desc"
+                )
+            );
+
+
+        const snapshot =
+            await getDocs(q);
+
+
+        if(snapshot.empty){
+
+            list.textContent =
+                "Nenhuma memória salva.";
+
+            return;
+
+        }
+
+
+        list.innerHTML = "";
+
+
+        snapshot.forEach(item => {
+
+            const data =
+                item.data();
+
+
+            const div =
+                document.createElement("div");
+
+
+            div.style.padding =
+                "8px 0";
+
+
+            div.style.borderBottom =
+                "1px solid #222";
+
+
+            div.textContent =
+                "🧠 " + data.text;
+
+
+            list.appendChild(div);
+
+        });
+
+
+    }catch(error){
+
+        console.error(
+            "Erro carregando memórias:",
+            error
+        );
+
+
+        list.textContent =
+            "Erro ao carregar memórias.";
+    }
+
+};
+
+
+/* =========================================================
+   ADICIONAR MEMÓRIA
+========================================================= */
+
+window.addMemory = async function(){
+
+    if(!currentUser){
+
+        alert(
+            "Aguarde a autenticação."
+        );
+
+        return;
+
+    }
+
+
+    const text =
+        prompt(
+            "O que você quer que eu memorize?"
+        );
+
+
+    if(!text){
+        return;
+    }
+
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            ),
+
+            {
+                text:text.trim(),
+                createdAt:serverTimestamp()
+            }
+
+        );
+
+
+        await loadMemories();
+
+
+        alert(
+            "Memória salva!"
+        );
+
+
+    }catch(error){
+
+        console.error(error);
+
+        alert(
+            "Não consegui salvar a memória."
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   APAGAR MEMÓRIAS
+========================================================= */
+
+window.deleteMemories = async function(){
+
+    if(!currentUser){
+        return;
+    }
+
+
+    if(!confirm(
+        "Apagar todas as suas memórias?"
+    )){
+        return;
+    }
+
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            );
+
+
+        const snapshot =
+            await getDocs(ref);
+
+
+        for(const item of snapshot.docs){
+
+            await deleteDoc(
+                doc(
+                    db,
+                    "users",
+                    currentUser.uid,
+                    "memories",
+                    item.id
+                )
+            );
+
+        }
+
+
+        await loadMemories();
+
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Erro ao apagar memórias."
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   MODAIS
+========================================================= */
+
+window.openMenu = function(){
+
+    document
+        .getElementById("menuModal")
+        .classList.add("active");
+
+};
+
+
+window.closeMenu = function(){
+
+    document
+        .getElementById("menuModal")
+        .classList.remove("active");
+
+};
+
+
+window.openMemory = function(){
+
+    document
+        .getElementById("memoryModal")
+        .classList.add("active");
+
+    loadMemories();
+
+};
+
+
+window.closeMemory = function(){
+
+    document
+        .getElementById("memoryModal")
+        .classList.remove("active");
+
+};
+
+
+/* =========================================================
+   LIMPAR CHAT
+========================================================= */
+
+window.clearChat = function(){
+
+    const chat =
+        document.getElementById("chat");
+
+
+    chat.innerHTML = `
+
+        <div class="welcome" id="welcome">
+
+            <div class="welcome-logo">
+                🤖
+            </div>
+
+            <h2>Olá! Eu sou a Minha IA.</h2>
+
+            <p>
+                Sua conversa foi limpa.
+            </p>
+
+        </div>
+
+    `;
+
+
+    chatHistory = [];
+
+
+    closeMenu();
+
+};
+
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+document
+    .getElementById("input")
+    .addEventListener(
+        "keydown",
+        event => {
+
+            if(
+                event.key === "Enter" &&
+                !event.shiftKey
+            ){
+
+                event.preventDefault();
+
+                sendMessage();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   AUTO RESIZE
+========================================================= */
+
+document
+    .getElementById("input")
+    .addEventListener(
+        "input",
+        function(){
+
+            this.style.height =
+                "auto";
+
+            this.style.height =
+                Math.min(
+                    this.scrollHeight,
+                    130
+                ) + "px";
+
+        }
+    );
+
+
+/* =========================================================
+   EXPOR TESTE NO CONSOLE
+========================================================= */
+
+console.log(
+    "%cMinha IA carregada.",
+    "color:#7c3aed;font-size:20px;font-weight:bold"
+);
+
+console.log(
+    "Firebase AI Logic:",
+    model
+);
+
+</script>
+
+</body>
+</html>
