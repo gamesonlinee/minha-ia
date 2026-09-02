@@ -1,1 +1,2543 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
 
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+
+<meta name="theme-color" content="#07070a">
+
+<title>Minha IA</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    -webkit-tap-highlight-color:transparent;
+}
+
+html,
+body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+}
+
+body{
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    color:#f7f7f8;
+
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(124,58,237,.18),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 100% 100%,
+            rgba(6,182,212,.10),
+            transparent 30%
+        ),
+        #07070a;
+}
+
+button,
+textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.app{
+    width:100%;
+    height:100dvh;
+
+    display:flex;
+    flex-direction:column;
+
+    overflow:hidden;
+}
+
+/* HEADER */
+
+header{
+    flex:0 0 64px;
+
+    height:64px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:
+        8px
+        max(14px,env(safe-area-inset-right))
+        8px
+        max(14px,env(safe-area-inset-left));
+
+    border-bottom:1px solid rgba(255,255,255,.07);
+
+    background:rgba(8,8,11,.82);
+
+    backdrop-filter:blur(22px);
+    -webkit-backdrop-filter:blur(22px);
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    min-width:0;
+}
+
+.logo{
+    width:40px;
+    height:40px;
+
+    flex:0 0 40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:13px;
+
+    font-size:21px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #06b6d4
+        );
+
+    box-shadow:
+        0 8px 25px rgba(124,58,237,.25);
+}
+
+.brand-text{
+    min-width:0;
+}
+
+.brand-title{
+    font-size:16px;
+    font-weight:700;
+}
+
+.status{
+    margin-top:2px;
+
+    font-size:10px;
+
+    color:#22c55e;
+
+    white-space:nowrap;
+}
+
+.status.warning{
+    color:#f59e0b;
+}
+
+.status.error{
+    color:#ef4444;
+}
+
+.header-actions{
+    display:flex;
+    gap:7px;
+}
+
+.icon-btn{
+    width:40px;
+    height:40px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border:1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    background:rgba(255,255,255,.045);
+
+    color:white;
+
+    font-size:18px;
+}
+
+.icon-btn:active{
+    transform:scale(.94);
+}
+
+/* CHAT */
+
+.chat{
+    flex:1 1 auto;
+
+    min-height:0;
+
+    overflow-y:auto;
+    overflow-x:hidden;
+
+    padding:
+        18px
+        max(14px,env(safe-area-inset-right))
+        155px
+        max(14px,env(safe-area-inset-left));
+
+    overscroll-behavior:contain;
+
+    scroll-behavior:smooth;
+}
+
+.chat::-webkit-scrollbar{
+    width:4px;
+}
+
+.chat::-webkit-scrollbar-thumb{
+    background:#333;
+    border-radius:10px;
+}
+
+/* WELCOME */
+
+.welcome{
+    min-height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    text-align:center;
+
+    padding:20px 0 100px;
+}
+
+.welcome-logo{
+    width:80px;
+    height:80px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:25px;
+
+    font-size:39px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #06b6d4
+        );
+
+    box-shadow:
+        0 15px 50px rgba(124,58,237,.28);
+}
+
+.welcome h2{
+    margin-top:20px;
+
+    font-size:27px;
+    line-height:1.2;
+}
+
+.welcome p{
+    max-width:420px;
+
+    margin-top:10px;
+
+    color:#92929a;
+
+    line-height:1.5;
+}
+
+/* MENSAGENS */
+
+.message{
+    width:100%;
+    max-width:900px;
+
+    margin:
+        0
+        auto
+        16px;
+
+    display:flex;
+}
+
+.message.user{
+    justify-content:flex-end;
+}
+
+.bubble{
+    max-width:min(84%,720px);
+
+    padding:12px 15px;
+
+    border-radius:18px;
+
+    line-height:1.55;
+
+    font-size:15px;
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+}
+
+.message.ai .bubble{
+    background:
+        rgba(255,255,255,.045);
+
+    border:
+        1px solid rgba(255,255,255,.07);
+}
+
+.message.user .bubble{
+    background:
+        linear-gradient(
+            135deg,
+            #6d28d9,
+            #7c3aed
+        );
+
+    box-shadow:
+        0 8px 25px rgba(124,58,237,.18);
+}
+
+/* STREAMING */
+
+.streaming{
+    min-height:22px;
+}
+
+.cursor{
+    display:inline-block;
+
+    width:6px;
+    height:17px;
+
+    margin-left:3px;
+
+    vertical-align:-3px;
+
+    border-radius:2px;
+
+    background:#aaa;
+
+    animation:blink .8s infinite;
+}
+
+@keyframes blink{
+
+    0%,50%{
+        opacity:1;
+    }
+
+    51%,100%{
+        opacity:0;
+    }
+
+}
+
+/* THINKING */
+
+.thinking{
+    display:flex;
+    align-items:center;
+    gap:5px;
+
+    min-width:62px;
+}
+
+.thinking span{
+    width:7px;
+    height:7px;
+
+    border-radius:50%;
+
+    background:#aaa;
+
+    animation:thinking 1.1s infinite;
+}
+
+.thinking span:nth-child(2){
+    animation-delay:.15s;
+}
+
+.thinking span:nth-child(3){
+    animation-delay:.3s;
+}
+
+@keyframes thinking{
+
+    0%,100%{
+        opacity:.2;
+        transform:translateY(0);
+    }
+
+    50%{
+        opacity:1;
+        transform:translateY(-3px);
+    }
+
+}
+
+/* BOTTOM */
+
+.bottom{
+    position:fixed;
+
+    z-index:20;
+
+    left:0;
+    right:0;
+    bottom:0;
+
+    padding:
+        7px
+        max(12px,env(safe-area-inset-right))
+        max(10px,env(safe-area-inset-bottom))
+        max(12px,env(safe-area-inset-left));
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(7,7,10,.94) 22%,
+            #07070a 55%
+        );
+
+    pointer-events:none;
+}
+
+.bottom-inner{
+    width:100%;
+    max-width:900px;
+
+    margin:auto;
+
+    pointer-events:auto;
+}
+
+/* TOOLS */
+
+.tools{
+    display:flex;
+
+    gap:7px;
+
+    overflow-x:auto;
+
+    padding:
+        0
+        2px
+        7px;
+
+    scrollbar-width:none;
+}
+
+.tools::-webkit-scrollbar{
+    display:none;
+}
+
+.tool{
+    flex:0 0 auto;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    background:
+        rgba(20,20,24,.9);
+
+    color:#ddd;
+
+    padding:
+        8px
+        11px;
+
+    border-radius:12px;
+
+    font-size:12px;
+
+    white-space:nowrap;
+}
+
+.tool.active{
+    background:#24164a;
+
+    border-color:#7c3aed;
+
+    color:white;
+}
+
+.tool:active{
+    transform:scale(.96);
+}
+
+/* INPUT */
+
+.input-area{
+    width:100%;
+
+    display:flex;
+    align-items:flex-end;
+
+    gap:7px;
+
+    padding:7px;
+
+    border:
+        1px solid rgba(255,255,255,.10);
+
+    border-radius:18px;
+
+    background:
+        rgba(18,18,22,.97);
+
+    box-shadow:
+        0 10px 40px rgba(0,0,0,.35);
+
+    backdrop-filter:blur(20px);
+}
+
+#input{
+    flex:1;
+
+    min-width:0;
+
+    height:42px;
+    min-height:42px;
+    max-height:110px;
+
+    resize:none;
+
+    overflow-y:auto;
+
+    border:0;
+    outline:0;
+
+    background:transparent;
+
+    color:white;
+
+    padding:
+        10px
+        6px;
+
+    font-size:15px;
+
+    line-height:22px;
+}
+
+#input::placeholder{
+    color:#777780;
+}
+
+.send{
+    flex:0 0 42px;
+
+    width:42px;
+    height:42px;
+
+    border:0;
+
+    border-radius:13px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    background:
+        linear-gradient(
+            135deg,
+            #7c3aed,
+            #06b6d4
+        );
+
+    color:white;
+
+    font-size:18px;
+
+    box-shadow:
+        0 5px 18px rgba(124,58,237,.28);
+}
+
+.send:active{
+    transform:scale(.93);
+}
+
+.send:disabled{
+    opacity:.45;
+}
+
+/* MODAIS */
+
+.modal-bg{
+    position:fixed;
+
+    inset:0;
+
+    z-index:100;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+
+    padding:18px;
+
+    background:
+        rgba(0,0,0,.72);
+
+    backdrop-filter:blur(8px);
+}
+
+.modal-bg.active{
+    display:flex;
+}
+
+.modal{
+    width:100%;
+    max-width:500px;
+    max-height:85dvh;
+
+    overflow-y:auto;
+
+    padding:20px;
+
+    border:
+        1px solid rgba(255,255,255,.09);
+
+    border-radius:22px;
+
+    background:#111116;
+
+    box-shadow:
+        0 30px 80px rgba(0,0,0,.55);
+}
+
+.modal h3{
+    font-size:20px;
+
+    margin-bottom:8px;
+}
+
+.modal p{
+    color:#999;
+
+    line-height:1.5;
+}
+
+.close{
+    float:right;
+
+    width:34px;
+    height:34px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:#1b1b20;
+
+    color:#aaa;
+
+    font-size:20px;
+}
+
+.modal-buttons{
+    display:flex;
+
+    flex-direction:column;
+
+    gap:9px;
+
+    margin-top:18px;
+}
+
+.modal-buttons button{
+    width:100%;
+
+    padding:13px;
+
+    border:
+        1px solid rgba(255,255,255,.08);
+
+    border-radius:12px;
+
+    background:#19191e;
+
+    color:white;
+}
+
+.debug{
+    margin-top:15px;
+
+    padding:13px;
+
+    border-radius:12px;
+
+    background:#09090c;
+
+    border:1px solid #29292e;
+
+    color:#aaa;
+
+    font-size:12px;
+
+    line-height:1.5;
+
+    white-space:pre-wrap;
+
+    word-break:break-word;
+}
+
+.debug.success{
+    color:#4ade80;
+}
+
+.debug.error{
+    color:#f87171;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+
+    .bubble{
+        max-width:89%;
+    }
+
+    .welcome h2{
+        font-size:24px;
+    }
+
+}
+
+/* ALTURA PEQUENA */
+
+@media(max-height:600px){
+
+    header{
+        height:58px;
+        flex-basis:58px;
+    }
+
+    .logo{
+        width:36px;
+        height:36px;
+        flex-basis:36px;
+    }
+
+    .welcome-logo{
+        width:60px;
+        height:60px;
+        font-size:30px;
+    }
+
+    .welcome h2{
+        margin-top:12px;
+        font-size:21px;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+
+    <div class="brand">
+
+        <div class="logo">
+            🤖
+        </div>
+
+        <div class="brand-text">
+
+            <div class="brand-title">
+                Minha IA
+            </div>
+
+            <div
+                id="status"
+                class="status">
+
+                Conectando...
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="header-actions">
+
+        <button
+            class="icon-btn"
+            onclick="openMemory()"
+            aria-label="Memória">
+
+            🧠
+
+        </button>
+
+        <button
+            class="icon-btn"
+            onclick="openMenu()"
+            aria-label="Menu">
+
+            ☰
+
+        </button>
+
+    </div>
+
+</header>
+
+
+<main
+    id="chat"
+    class="chat">
+
+    <div
+        id="welcome"
+        class="welcome">
+
+        <div class="welcome-logo">
+            🤖
+        </div>
+
+        <h2>
+            Olá! Eu sou a Minha IA.
+        </h2>
+
+        <p>
+            Seu assistente pessoal inteligente.
+            Pergunte qualquer coisa para começar.
+        </p>
+
+    </div>
+
+</main>
+
+
+<!-- BARRA INFERIOR -->
+
+<div class="bottom">
+
+    <div class="bottom-inner">
+
+        <div class="tools">
+
+            <button
+                class="tool"
+                data-mode="imagem"
+                onclick="setMode('imagem')">
+
+                🎨 Imagem
+
+            </button>
+
+            <button
+                class="tool"
+                data-mode="pdf"
+                onclick="setMode('pdf')">
+
+                📄 PDF
+
+            </button>
+
+            <button
+                class="tool"
+                data-mode="financas"
+                onclick="setMode('financas')">
+
+                💰 Finanças
+
+            </button>
+
+            <button
+                class="tool"
+                data-mode="faculdade"
+                onclick="setMode('faculdade')">
+
+                📚 Faculdade
+
+            </button>
+
+            <button
+                class="tool"
+                data-mode="codigo"
+                onclick="setMode('codigo')">
+
+                💻 Código
+
+            </button>
+
+            <button
+                class="tool"
+                onclick="openMemory()">
+
+                🧠 Memória
+
+            </button>
+
+        </div>
+
+
+        <div class="input-area">
+
+            <textarea
+                id="input"
+                rows="1"
+                placeholder="Digite sua mensagem...">
+            </textarea>
+
+            <button
+                id="sendButton"
+                class="send"
+                onclick="sendMessage()"
+                aria-label="Enviar">
+
+                ➤
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+</div>
+
+
+<!-- MENU -->
+
+<div
+    id="menuModal"
+    class="modal-bg">
+
+    <div class="modal">
+
+        <button
+            class="close"
+            onclick="closeMenu()">
+
+            ×
+
+        </button>
+
+        <h3>
+            ⚙️ Minha IA
+        </h3>
+
+        <p>
+            Configurações e diagnóstico.
+        </p>
+
+        <div class="modal-buttons">
+
+            <button onclick="testGemini()">
+                🧪 Testar Gemini
+            </button>
+
+            <button onclick="openMemory()">
+                🧠 Gerenciar memória
+            </button>
+
+            <button onclick="clearChat()">
+                🗑️ Limpar conversa
+            </button>
+
+        </div>
+
+        <div
+            id="debugBox"
+            class="debug">
+
+            Nenhum teste executado.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- MEMÓRIA -->
+
+<div
+    id="memoryModal"
+    class="modal-bg">
+
+    <div class="modal">
+
+        <button
+            class="close"
+            onclick="closeMemory()">
+
+            ×
+
+        </button>
+
+        <h3>
+            🧠 Memória
+        </h3>
+
+        <p>
+            Informações salvas para personalizar
+            suas conversas.
+        </p>
+
+        <div
+            id="memoryList"
+            class="debug">
+
+            Carregando...
+
+        </div>
+
+        <div class="modal-buttons">
+
+            <button onclick="addMemory()">
+                ➕ Adicionar memória
+            </button>
+
+            <button onclick="loadMemories()">
+                🔄 Atualizar
+            </button>
+
+            <button onclick="deleteMemories()">
+                🗑️ Apagar memórias
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script type="module">
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+import {
+    initializeApp
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+import {
+    getAuth,
+    signInAnonymously,
+    onAuthStateChanged
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    deleteDoc,
+    doc,
+    serverTimestamp
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+    getAI,
+    getGenerativeModel,
+    GoogleAIBackend
+} from
+"https://www.gstatic.com/firebasejs/12.1.0/firebase-ai.js";
+
+
+/* =========================================================
+   CONFIGURAÇÃO
+========================================================= */
+
+const firebaseConfig = {
+
+    apiKey:
+        "AIzaSyB_DdJSOnJbrU-69jxSL36rXmuNCUa9iwA",
+
+    authDomain:
+        "minha-ia-4756b.firebaseapp.com",
+
+    projectId:
+        "minha-ia-4756b",
+
+    storageBucket:
+        "minha-ia-4756b.firebasestorage.app",
+
+    messagingSenderId:
+        "319954826530",
+
+    appId:
+        "1:319954826530:web:03f3fb2fe5a855bf73217b"
+
+};
+
+
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+
+let app = null;
+
+let auth = null;
+
+let db = null;
+
+let ai = null;
+
+let model = null;
+
+let currentUser = null;
+
+let currentMode = "normal";
+
+let chatHistory = [];
+
+let memoryCache = [];
+
+let generating = false;
+
+
+/* =========================================================
+   FIREBASE
+========================================================= */
+
+try{
+
+    app =
+        initializeApp(
+            firebaseConfig
+        );
+
+    auth =
+        getAuth(app);
+
+    db =
+        getFirestore(app);
+
+    ai =
+        getAI(
+            app,
+            {
+                backend:
+                    new GoogleAIBackend()
+            }
+        );
+
+    model =
+        getGenerativeModel(
+            ai,
+            {
+                model:
+                    "gemini-3.7-flash"
+            }
+        );
+
+    setStatus(
+        "Gemini conectado",
+        "normal"
+    );
+
+}catch(error){
+
+    console.error(
+        "Firebase:",
+        error
+    );
+
+    setStatus(
+        "Erro no Gemini",
+        "error"
+    );
+
+}
+
+
+/* =========================================================
+   AUTENTICAÇÃO
+========================================================= */
+
+if(auth){
+
+    signInAnonymously(auth)
+
+    .catch(error => {
+
+        console.error(
+            "Autenticação:",
+            error
+        );
+
+        setStatus(
+            "Erro de autenticação",
+            "error"
+        );
+
+    });
+
+
+    onAuthStateChanged(
+        auth,
+        async user => {
+
+            if(!user){
+                return;
+            }
+
+            currentUser =
+                user;
+
+            await loadMemories();
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+function setStatus(
+    text,
+    type=""
+){
+
+    const element =
+        document.getElementById(
+            "status"
+        );
+
+    if(!element){
+        return;
+    }
+
+    element.textContent =
+        text;
+
+    element.className =
+        "status " + type;
+
+}
+
+
+/* =========================================================
+   ENVIAR MENSAGEM
+========================================================= */
+
+window.sendMessage =
+async function(){
+
+    if(generating){
+        return;
+    }
+
+    const input =
+        document.getElementById(
+            "input"
+        );
+
+    const button =
+        document.getElementById(
+            "sendButton"
+        );
+
+    const text =
+        input.value.trim();
+
+    if(!text){
+        return;
+    }
+
+    if(!model){
+
+        addMessage(
+            "ai",
+            "⚠️ O Gemini ainda não está disponível."
+        );
+
+        return;
+    }
+
+    generating = true;
+
+    button.disabled = true;
+
+    input.value = "";
+
+    input.style.height =
+        "42px";
+
+    hideWelcome();
+
+    addMessage(
+        "user",
+        text
+    );
+
+    chatHistory.push({
+
+        role:"user",
+
+        text:text
+
+    });
+
+    const thinking =
+        addThinking();
+
+    setStatus(
+        "Pensando...",
+        "warning"
+    );
+
+
+    try{
+
+        /*
+         PROMPT OTIMIZADO
+        */
+
+        let prompt = `Você é a Minha IA, um assistente pessoal inteligente.
+
+Responda sempre em português do Brasil.
+
+Seja útil, direto e natural.
+
+`;
+
+        if(currentMode !== "normal"){
+
+            const modeInstructions = {
+
+                imagem:
+                    "O usuário está no modo imagem. Ajude a criar prompts detalhados para geração de imagens e descreva composição, iluminação e estilo quando útil.",
+
+                pdf:
+                    "O usuário está no modo PDF. Ajude a criar, organizar, resumir ou estruturar conteúdo que possa virar PDF.",
+
+                financas:
+                    "O usuário está no modo finanças. Faça cálculos com cuidado, explique valores e deixe claro quando uma informação é estimativa.",
+
+                faculdade:
+                    "O usuário está no modo faculdade. Explique de forma didática e ajude nos estudos, trabalhos, programação e conceitos acadêmicos.",
+
+                codigo:
+                    "O usuário está no modo programação. Produza código correto, explique erros e priorize soluções práticas."
+            };
+
+            prompt +=
+                "\nModo atual:\n" +
+                (
+                    modeInstructions[currentMode]
+                    ||
+                    currentMode
+                ) +
+                "\n";
+        }
+
+
+        /*
+         MEMÓRIA
+        */
+
+        if(memoryCache.length){
+
+            prompt +=
+                "\nMemórias do usuário:\n" +
+
+                memoryCache
+                    .slice(0,15)
+                    .map(
+                        item =>
+                            "- " + item
+                    )
+                    .join("\n");
+        }
+
+
+        /*
+         HISTÓRICO CURTO
+        */
+
+        const recent =
+            chatHistory.slice(-6);
+
+        if(recent.length > 1){
+
+            prompt +=
+                "\n\nConversa recente:\n" +
+
+                recent
+                    .map(
+                        item =>
+                            item.role +
+                            ": " +
+                            item.text
+                    )
+                    .join("\n");
+        }
+
+
+        prompt +=
+            "\n\nUsuário:\n" +
+            text +
+            "\n\nResponda agora:";
+
+
+        /*
+         REMOVE O THINKING
+         */
+
+        removeThinking(
+            thinking
+        );
+
+
+        /*
+         CRIA BOLHA DE STREAMING
+         */
+
+        const streamMessage =
+            createStreamingMessage();
+
+        let answer = "";
+
+
+        /*
+         STREAMING
+         */
+
+        const result =
+            await model.generateContentStream(
+                prompt
+            );
+
+
+        for await(
+            const chunk
+            of result.stream
+        ){
+
+            const chunkText =
+                chunk.text();
+
+            if(!chunkText){
+                continue;
+            }
+
+            answer +=
+                chunkText;
+
+            updateStreamingMessage(
+                streamMessage,
+                answer
+            );
+
+            scrollToBottom();
+        }
+
+
+        /*
+         FALLBACK
+         */
+
+        if(!answer.trim()){
+
+            answer =
+                "Não recebi uma resposta do modelo.";
+
+            updateStreamingMessage(
+                streamMessage,
+                answer
+            );
+
+        }
+
+
+        chatHistory.push({
+
+            role:"assistant",
+
+            text:answer
+
+        });
+
+
+        /*
+         MEMÓRIA
+         */
+
+        detectMemoryCommand(
+            text
+        );
+
+
+        setStatus(
+            "Gemini conectado",
+            "normal"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Erro Gemini:",
+            error
+        );
+
+        removeThinking(
+            thinking
+        );
+
+        addMessage(
+            "ai",
+            createErrorMessage(error)
+        );
+
+        setStatus(
+            "Gemini indisponível",
+            "error"
+        );
+
+    }
+
+
+    generating = false;
+
+    button.disabled = false;
+
+    input.focus();
+
+};
+
+
+/* =========================================================
+   STREAMING
+========================================================= */
+
+function createStreamingMessage(){
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+    message.className =
+        "message ai";
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble streaming";
+
+    bubble.innerHTML =
+        '<span class="cursor"></span>';
+
+    message.appendChild(
+        bubble
+    );
+
+    chat.appendChild(
+        message
+    );
+
+    scrollToBottom();
+
+    return {
+        message,
+        bubble
+    };
+
+}
+
+
+function updateStreamingMessage(
+    element,
+    text
+){
+
+    element.bubble.textContent =
+        text;
+
+    const cursor =
+        document.createElement(
+            "span"
+        );
+
+    cursor.className =
+        "cursor";
+
+    element.bubble.appendChild(
+        cursor
+    );
+
+}
+
+
+function scrollToBottom(){
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+    requestAnimationFrame(
+        () => {
+
+            chat.scrollTop =
+                chat.scrollHeight;
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   ERROS
+========================================================= */
+
+function createErrorMessage(
+    error
+){
+
+    const message =
+        String(
+            error?.message ||
+            error ||
+            "Erro desconhecido."
+        );
+
+    const lower =
+        message.toLowerCase();
+
+
+    /*
+       QUOTA
+    */
+
+    if(
+        lower.includes("429") ||
+        lower.includes("quota exceeded") ||
+        lower.includes("free_tier")
+    ){
+
+        return `⚠️ Limite gratuito do Gemini atingido.
+
+O Firebase está conectado corretamente, mas o modelo informou que a quota gratuita foi excedida.
+
+Isso não é erro do seu HTML.
+
+Quando a quota estiver disponível novamente, a Minha IA poderá responder normalmente.
+
+Detalhe técnico:
+${message}`;
+
+    }
+
+
+    /*
+       ALTA DEMANDA
+    */
+
+    if(
+        lower.includes("high demand")
+    ){
+
+        return `⚠️ O Gemini está com muita demanda neste momento.
+
+Sua conexão com o Firebase está funcionando.
+
+Tente novamente daqui a pouco.`;
+
+    }
+
+
+    return `⚠️ Não consegui falar com o Gemini.
+
+${message}
+
+Código:
+${error?.code || "desconhecido"}`;
+
+}
+
+
+/* =========================================================
+   TESTE
+========================================================= */
+
+window.testGemini =
+async function(){
+
+    const box =
+        document.getElementById(
+            "debugBox"
+        );
+
+    box.className =
+        "debug";
+
+    box.textContent =
+        "⏳ Testando Gemini...\n";
+
+    try{
+
+        if(!model){
+
+            throw new Error(
+                "Modelo não inicializado."
+            );
+
+        }
+
+        box.textContent +=
+            "✅ Firebase AI Logic carregado\n";
+
+        box.textContent +=
+            "⏳ Enviando teste...\n";
+
+        const result =
+            await model.generateContent(
+                "Responda somente: FUNCIONOU"
+            );
+
+        const answer =
+            result.response.text();
+
+        box.className =
+            "debug success";
+
+        box.textContent =
+            "✅ GEMINI FUNCIONANDO\n\n" +
+            answer;
+
+        setStatus(
+            "Gemini funcionando",
+            "normal"
+        );
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        box.className =
+            "debug error";
+
+        box.textContent =
+            "❌ GEMINI COM ERRO\n\n" +
+            createErrorMessage(error);
+
+    }
+
+};
+
+
+/* =========================================================
+   MENSAGEM NORMAL
+========================================================= */
+
+function addMessage(
+    role,
+    text
+){
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+    message.className =
+        "message " +
+        role;
+
+    const bubble =
+        document.createElement(
+            "div"
+        );
+
+    bubble.className =
+        "bubble";
+
+    bubble.textContent =
+        text;
+
+    message.appendChild(
+        bubble
+    );
+
+    chat.appendChild(
+        message
+    );
+
+    scrollToBottom();
+
+}
+
+
+/* =========================================================
+   PENSANDO
+========================================================= */
+
+function addThinking(){
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+    const message =
+        document.createElement(
+            "div"
+        );
+
+    message.className =
+        "message ai";
+
+    message.innerHTML = `
+
+        <div class="bubble thinking">
+
+            <span></span>
+            <span></span>
+            <span></span>
+
+        </div>
+
+    `;
+
+    chat.appendChild(
+        message
+    );
+
+    scrollToBottom();
+
+    return message;
+
+}
+
+
+function removeThinking(
+    element
+){
+
+    if(element){
+        element.remove();
+    }
+
+}
+
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+function hideWelcome(){
+
+    const welcome =
+        document.getElementById(
+            "welcome"
+        );
+
+    if(welcome){
+        welcome.remove();
+    }
+
+}
+
+
+/* =========================================================
+   MODOS
+========================================================= */
+
+window.setMode =
+function(mode){
+
+    currentMode =
+        mode;
+
+    document
+        .querySelectorAll(".tool")
+        .forEach(
+            button => {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.mode === mode
+                );
+
+            }
+        );
+
+    const names = {
+
+        imagem:
+            "🎨 Modo imagem ativado. Posso criar e melhorar prompts de imagem.",
+
+        pdf:
+            "📄 Modo PDF ativado. Posso organizar e preparar conteúdos para PDF.",
+
+        financas:
+            "💰 Modo finanças ativado.",
+
+        faculdade:
+            "📚 Modo faculdade ativado.",
+
+        codigo:
+            "💻 Modo programação ativado."
+
+    };
+
+    addMessage(
+        "ai",
+        names[mode] ||
+        "Modo normal ativado."
+    );
+
+    document
+        .getElementById(
+            "input"
+        )
+        .focus();
+
+};
+
+
+/* =========================================================
+   MEMÓRIA
+========================================================= */
+
+async function loadMemories(){
+
+    if(
+        !currentUser ||
+        !db
+    ){
+
+        return;
+
+    }
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            );
+
+        const snapshot =
+            await getDocs(
+                ref
+            );
+
+        memoryCache = [];
+
+        snapshot.forEach(
+            item => {
+
+                const data =
+                    item.data();
+
+                if(data.text){
+
+                    memoryCache.push(
+                        data.text
+                    );
+
+                }
+
+            }
+        );
+
+        renderMemories();
+
+    }catch(error){
+
+        console.error(
+            "Erro memória:",
+            error
+        );
+
+    }
+
+}
+
+
+function renderMemories(){
+
+    const list =
+        document.getElementById(
+            "memoryList"
+        );
+
+    if(!list){
+        return;
+    }
+
+    if(!memoryCache.length){
+
+        list.textContent =
+            "Nenhuma memória salva.";
+
+        return;
+
+    }
+
+    list.innerHTML = "";
+
+    memoryCache.forEach(
+        memory => {
+
+            const div =
+                document.createElement(
+                    "div"
+                );
+
+            div.style.padding =
+                "8px 0";
+
+            div.style.borderBottom =
+                "1px solid #222";
+
+            div.textContent =
+                "🧠 " + memory;
+
+            list.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   DETECTAR MEMÓRIA
+========================================================= */
+
+async function detectMemoryCommand(
+    text
+){
+
+    if(!currentUser){
+        return;
+    }
+
+    const lower =
+        text.toLowerCase();
+
+    const prefixes = [
+
+        "guarde ",
+
+        "lembre ",
+
+        "memorize ",
+
+        "lembra que ",
+
+        "lembre que "
+
+    ];
+
+    let memory =
+        null;
+
+    for(
+        const prefix
+        of prefixes
+    ){
+
+        if(
+            lower.startsWith(
+                prefix
+            )
+        ){
+
+            memory =
+                text
+                    .substring(
+                        prefix.length
+                    )
+                    .trim();
+
+            break;
+
+        }
+
+    }
+
+    if(!memory){
+        return;
+    }
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            ),
+
+            {
+                text:memory,
+
+                createdAt:
+                    serverTimestamp()
+            }
+
+        );
+
+        memoryCache.unshift(
+            memory
+        );
+
+        renderMemories();
+
+    }catch(error){
+
+        console.error(
+            "Erro salvando memória:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   ADICIONAR MEMÓRIA
+========================================================= */
+
+window.addMemory =
+async function(){
+
+    if(!currentUser){
+
+        alert(
+            "Aguarde a autenticação."
+        );
+
+        return;
+
+    }
+
+    const text =
+        prompt(
+            "O que você quer que eu memorize?"
+        );
+
+    if(!text){
+        return;
+    }
+
+    const clean =
+        text.trim();
+
+    if(!clean){
+        return;
+    }
+
+    try{
+
+        await addDoc(
+
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            ),
+
+            {
+                text:clean,
+
+                createdAt:
+                    serverTimestamp()
+            }
+
+        );
+
+        memoryCache.unshift(
+            clean
+        );
+
+        renderMemories();
+
+        alert(
+            "🧠 Memória salva!"
+        );
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Não consegui salvar a memória."
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   APAGAR MEMÓRIAS
+========================================================= */
+
+window.deleteMemories =
+async function(){
+
+    if(!currentUser){
+        return;
+    }
+
+    if(
+        !confirm(
+            "Apagar todas as memórias?"
+        )
+    ){
+
+        return;
+
+    }
+
+    try{
+
+        const ref =
+            collection(
+                db,
+                "users",
+                currentUser.uid,
+                "memories"
+            );
+
+        const snapshot =
+            await getDocs(
+                ref
+            );
+
+        for(
+            const item
+            of snapshot.docs
+        ){
+
+            await deleteDoc(
+
+                doc(
+                    db,
+                    "users",
+                    currentUser.uid,
+                    "memories",
+                    item.id
+                )
+
+            );
+
+        }
+
+        memoryCache = [];
+
+        renderMemories();
+
+    }catch(error){
+
+        console.error(
+            error
+        );
+
+        alert(
+            "Erro ao apagar memórias."
+        );
+
+    }
+
+};
+
+
+/* =========================================================
+   MODAIS
+========================================================= */
+
+window.openMenu =
+function(){
+
+    document
+        .getElementById(
+            "menuModal"
+        )
+        .classList.add(
+            "active"
+        );
+
+};
+
+window.closeMenu =
+function(){
+
+    document
+        .getElementById(
+            "menuModal"
+        )
+        .classList.remove(
+            "active"
+        );
+
+};
+
+window.openMemory =
+function(){
+
+    document
+        .getElementById(
+            "memoryModal"
+        )
+        .classList.add(
+            "active"
+        );
+
+    renderMemories();
+
+};
+
+window.closeMemory =
+function(){
+
+    document
+        .getElementById(
+            "memoryModal"
+        )
+        .classList.remove(
+            "active"
+        );
+
+};
+
+
+/* =========================================================
+   LIMPAR CONVERSA
+========================================================= */
+
+window.clearChat =
+function(){
+
+    if(generating){
+        return;
+    }
+
+    const chat =
+        document.getElementById(
+            "chat"
+        );
+
+    chat.innerHTML = `
+
+        <div
+            id="welcome"
+            class="welcome">
+
+            <div class="welcome-logo">
+                🤖
+            </div>
+
+            <h2>
+                Olá! Eu sou a Minha IA.
+            </h2>
+
+            <p>
+                Sua conversa foi limpa.
+            </p>
+
+        </div>
+
+    `;
+
+    chatHistory = [];
+
+    closeMenu();
+
+};
+
+
+/* =========================================================
+   ENTER
+========================================================= */
+
+const input =
+    document.getElementById(
+        "input"
+    );
+
+input.addEventListener(
+    "keydown",
+    event => {
+
+        if(
+            event.key === "Enter" &&
+            !event.shiftKey
+        ){
+
+            event.preventDefault();
+
+            sendMessage();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   AUTO HEIGHT
+========================================================= */
+
+input.addEventListener(
+    "input",
+    function(){
+
+        this.style.height =
+            "42px";
+
+        this.style.height =
+            Math.min(
+                this.scrollHeight,
+                110
+            ) + "px";
+
+    }
+);
+
+
+/* =========================================================
+   FECHAR MODAL
+========================================================= */
+
+document
+    .querySelectorAll(".modal-bg")
+    .forEach(
+        modal => {
+
+            modal.addEventListener(
+                "click",
+                event => {
+
+                    if(
+                        event.target === modal
+                    ){
+
+                        modal.classList.remove(
+                            "active"
+                        );
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
+
+/* =========================================================
+   ESC
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if(event.key === "Escape"){
+
+            document
+                .querySelectorAll(".modal-bg")
+                .forEach(
+                    modal =>
+                        modal.classList.remove(
+                            "active"
+                        )
+                );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   FINAL
+========================================================= */
+
+console.log(
+    "%cMINHA IA",
+    "font-size:24px;font-weight:bold"
+);
+
+console.log(
+    "Sistema carregado com streaming."
+);
+
+</script>
+
+</body>
+</html>
